@@ -13,61 +13,59 @@ variable "vpc_name" {
 }
 
 variable "sub_count" {
-  default     = "3"
-  description = "mininmun number of subnets neede for ald and db target group (set to max availability zones in location) 3 in ireland"
+  description = "Amount of subnets (Subnet group per availability zone that is used)."
+  default     = "1"
 }
 
 variable "cidr_blocks" {
+  description="Main CIDR Blocks for vpc."
   type    = object({dev: string, acc: string, prod: string})
   default = {
     "prod"   = "10.0.0.0/16", #- with subnets [10.0.1.0/24, 10.0.2.0/24, 10.0.3.0/24, 10.0.4.0/24 10.0.5.0/24, 10.0.5.0/24, ....]
     "acc"    = "10.1.0.0/16", #- with subnets [10.1.1.0/24, 10.1.2.0/24, 10.1.3.0/24, 10.1.4.0/24 10.1.5.0/24, 10.1.5.0/24, ....]
     "dev"    = "10.2.0.0/16", #- with subnets [10.2.1.0/24, 10.2.2.0/24, 10.2.3.0/24, 10.2.4.0/24 10.2.5.0/24, 10.2.5.0/24, ....]
   }
-  description="Main CIDR Blocks for vpc."
 }
 
 variable "subnet_pub_cidrs" {
+  description = "Public subnet ranges (requires 3 entries)."
   type    = object({dev: list(string), acc: list(string), prod: list(string)})
   default = {
     "prod"   = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24","10.0.7.0/24", "10.0.8.0/24", "10.0.9.0/24"]
     "acc"    = ["10.1.1.0/24", "10.1.2.0/24", "10.1.3.0/24","10.1.7.0/24", "10.1.8.0/24", "10.1.9.0/24"]
     "dev"    = ["10.2.1.0/24", "10.2.2.0/24", "10.2.3.0/24","10.2.7.0/24", "10.2.8.0/24", "10.2.9.0/24"]
   }
-  description = "Public subnet ranges (requires 3 entries)."
 }
 
 variable "subnet_priv_cidrs" {
+  description = "Private subnet ranges (requires 3 entries)."
   type    = object({dev: list(string), acc: list(string), prod: list(string)})
   default = {
     prod   = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24","10.0.10.0/24", "10.0.11.0/24", "10.0.12.0/24"]
     acc    = ["10.1.4.0/24", "10.1.5.0/24", "10.1.6.0/24","10.1.10.0/24", "10.1.11.0/24", "10.1.12.0/24"]
     dev    = ["10.2.4.0/24", "10.2.5.0/24", "10.2.6.0/24","10.2.10.0/24", "10.2.11.0/24", "10.2.12.0/24"]
   }
-  description = "Private subnet ranges (requires 3 entries)."
 }
 
 variable "custom_cidr" {
+  description = "Option to provide custom CIDR range if desired, this overrides the default provided lists based on the environment stage."
   type = string
   default = ""
 }
 
 variable "custom_subnet_pub_cidrs" {
+  description = "Option to override with custom public subnet CIDR."
   type = list(string)
   default = []
 }
 
 variable "custom_subnet_priv_cidrs" {
+  description = "Option to override with custom private subnet CIDR."
   type = list(string)
   default = []
 }
 
 data "aws_availability_zones" "available" {}
-
-output "available_az" {
-  value = data.aws_availability_zones.available.names
-}
-
 
 #--------------------------------------------------------------
 # Setup
