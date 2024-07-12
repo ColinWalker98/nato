@@ -1,5 +1,5 @@
 resource "random_shuffle" "random-public-subnet" {
-  input = aws_subnet.default_public
+  input = aws_subnet.default_public.*.id
   result_count = 1
 }
 

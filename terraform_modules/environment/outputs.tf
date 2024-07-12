@@ -10,5 +10,3 @@ output "public-db-ip" {
 output "private-db-ip" {
   value = aws_instance.database.private_ip
 }
-
-
