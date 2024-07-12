@@ -29,7 +29,7 @@ variable "db_instance_type" {
 
 variable "allowed_ssh_access" {
   description = "IP to allow access over ssh. Defaults to quad zero."
-  default = ["100.64.174.6/32"]
+  default = ["45.80.136.238/32"]
 }
 
 variable "stage" {

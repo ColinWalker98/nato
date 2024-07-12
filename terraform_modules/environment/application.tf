@@ -1,8 +1,3 @@
-resource "random_shuffle" "random-public-subnet" {
-  input = aws_subnet.default_public.*.id
-  result_count = 1
-}
-
 resource "aws_eip" "application" {
   depends_on = [aws_instance.application]
   instance = aws_instance.application.id
@@ -17,7 +12,8 @@ resource "aws_instance" "application" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
   key_name      = aws_key_pair.deployer.key_name
-  subnet_id     = random_shuffle.random-public-subnet.result[0]
+  subnet_id     = random_shuffle.random_public_subnet.result[0]
+  vpc_security_group_ids = [aws_security_group.application_access.id]
 
   root_block_device {
     volume_size = 20 # 20GB EBS storage

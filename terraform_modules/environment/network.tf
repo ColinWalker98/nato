@@ -14,7 +14,7 @@ variable "vpc_name" {
 
 variable "sub_count" {
   description = "Amount of subnets (Subnet group per availability zone that is used)."
-  default     = "1"
+  default     = "2"
 }
 
 variable "cidr_blocks" {

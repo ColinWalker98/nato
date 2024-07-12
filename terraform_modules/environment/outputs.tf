@@ -1,12 +1,15 @@
-output "public-app-ip" {
-  value = aws_eip.application
-}
-output "private-app-ip" {
+output "private_app_ip" {
   value = aws_instance.application.private_ip
 }
-output "public-db-ip" {
-  value = aws_eip.database
-}
-output "private-db-ip" {
+
+output "private_db_ip" {
   value = aws_instance.database.private_ip
+}
+
+output "public_jumphost_ip" {
+  value = aws_eip.jumphost
+}
+
+output "loadbalancer_dns" {
+  value = aws_lb.loadbalancer.dns_name
 }
