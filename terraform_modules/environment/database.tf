@@ -1,4 +1,14 @@
+resource "aws_eip" "database" {
+  depends_on = [aws_instance.database]
+  instance = aws_instance.database.id
+  domain = "vpc"
+  tags = {
+    "Name":"${var.stage}-db-eip"
+  }
+}
+
 resource "aws_instance" "database" {
+  depends_on = [aws_key_pair.deployer]
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
   key_name      = aws_key_pair.deployer.key_name

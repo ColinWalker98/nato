@@ -62,12 +62,10 @@ variable "custom_subnet_priv_cidrs" {
   default = []
 }
 
-data "aws_availability_zones" "default" {
-  state = "available"
-  filter {
-    name   = "opt-in-status"
-    values = ["opt-in-not-required"]
-  }
+data "aws_availability_zones" "available" {}
+
+output "available_az" {
+  value = data.aws_availability_zones.available.names
 }
 
 
@@ -101,30 +99,30 @@ resource "aws_route" "internet_access" {
   gateway_id             = aws_internet_gateway.default.id
 }
 
-# Create public subnets
-resource "aws_subnet" "default_public" {
-  count                   = var.sub_count
-  vpc_id                  = aws_vpc.default.id
-  cidr_block              = element(local.subnet_pub_cidrs, count.index)
-  availability_zone       = element(data.availability_zones.names, count.index)
-  map_public_ip_on_launch = true
-
-  tags = {
-    Name = "${var.stage}-pub_subnet-${count.index}"
-  }
-}
-
-# Create private subnet 
-resource "aws_subnet" "default_private" {
-  count             = var.sub_count
-  vpc_id            = aws_vpc.default.id
-  cidr_block        = element(local.subnet_priv_cidrs, count.index)
-  availability_zone = element(data.availability_zones.names, count.index)
-
-  tags = {
-    Name = "${var.stage}-priv_subnet-${count.index}"
-  }
-}
+## Create public subnets
+#resource "aws_subnet" "default_public" {
+#  count                   = var.sub_count
+#  vpc_id                  = aws_vpc.default.id
+#  cidr_block              = element(local.subnet_pub_cidrs, count.index)
+#  availability_zone       = element(data.availability_zones.available.names, count.index)
+#  map_public_ip_on_launch = true
+#
+#  tags = {
+#    Name = "${var.stage}-pub_subnet-${count.index}"
+#  }
+#}
+#
+## Create private subnet
+#resource "aws_subnet" "default_private" {
+#  count             = var.sub_count
+#  vpc_id            = aws_vpc.default.id
+#  cidr_block        = element(local.subnet_priv_cidrs, count.index)
+#  availability_zone = element(data.availability_zones.available.names, count.index)
+#
+#  tags = {
+#    Name = "${var.stage}-priv_subnet-${count.index}"
+#  }
+#}
 
 
 

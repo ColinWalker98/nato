@@ -3,7 +3,6 @@ module "dev_app" {
   aws_region = "eu-central-1"
   instance_type = "t2.micro"
   stage = "dev"
-  public_key_path = "~/.ssh/id_ecdsa.pub"
 }
 
 
