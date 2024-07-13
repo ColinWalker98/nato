@@ -1,9 +1,9 @@
 module "dev_app" {
-  source = "../../terraform_modules/environment"
-  aws_region = "eu-central-1"
+  source        = "../../terraform_modules/environment"
+  aws_region    = "eu-central-1"
   instance_type = "t2.micro"
-  stage = "dev"
-  accountid = "743558884073"
+  stage         = "dev"
+  accountid     = "743558884073"
 }
 
 
