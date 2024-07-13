@@ -20,10 +20,18 @@
         name: python3-pip
         state: present
 
+    - name: Create log directory for Flask application
+      file:
+        path: /var/log/flask
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+
     - name: Copy application files to server
       copy:
         src: ../../flask_app
-        dest: /opt/flask_app
+        dest: /opt
 
     - name: Install required Python packages from requirements.txt
       become: yes
