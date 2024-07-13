@@ -15,7 +15,7 @@ variable "aws_region" {
 variable "accountid" {
   description = "Defines the aws account in which to deploy the resources."
   type        = string
-  default     = "743558884073"
+  required    = yes
 }
 
 variable "instance_type" {
@@ -31,12 +31,12 @@ variable "public_key_path" {
 }
 
 variable "app_instance_type" {
-  description = "Instance type override for app instance, by default free tier."
+  description = "Instance type override for app instance. If not set, reverts to var.instance_type."
   type        = string
   default     = ""
 }
 variable "db_instance_type" {
-  description = "Instance type override for db instance, by default free tier."
+  description = "Instance type override for db instance. If not set, reverts to var.instance_type."
   type        = string
   default     = ""
 }
@@ -51,6 +51,7 @@ variable "stage" {
   description = "Stage of the environments (dev / acceptance / production)."
   type        = string
   default     = "dev"
+  required    = yes
 }
 
 variable "vpc_name" {

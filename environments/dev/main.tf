@@ -3,6 +3,7 @@ module "dev_app" {
   aws_region = "eu-central-1"
   instance_type = "t2.micro"
   stage = "dev"
+  accountid = "743558884073"
 }
 
 
