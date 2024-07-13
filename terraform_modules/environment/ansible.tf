@@ -56,6 +56,9 @@ data "template_file" "host_vars_jumphost" {
   vars = {
     SSH__HOST        = "${var.stage}-${var.env_name}-jumphost"
     SERVER__HOSTNAME = "${var.stage}-${var.env_name}-jumphost@local"
+    PRIVATE__IP      = "${aws_instance.jumphost.private_ip}"
+    MONGO__IP        = "${aws_instance.database.private_ip}"
+    MONGO__URI       = "mongodb://${aws_instance.database.private_ip}:27017"
   }
 }
 
