@@ -5,6 +5,11 @@ locals {
   subnet_pub_cidrs  = length(var.custom_subnet_pub_cidrs) == 0 ? var.subnet_pub_cidrs[var.stage] : var.custom_subnet_pub_cidrs
   subnet_priv_cidrs = length(var.custom_subnet_priv_cidrs) == 0 ? var.subnet_priv_cidrs[var.stage] : var.custom_subnet_priv_cidrs
 }
+variable "fully_automated_deployment" {
+  description = "Boolean to define whether to perform the full deployment or no."
+  type        = bool
+  default     = false
+}
 
 variable "aws_region" {
   description = "Defines the region where to deploy the resources."

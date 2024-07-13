@@ -3,7 +3,7 @@
 # these will be removed and the new configuration will be added to ensure the latest and updated values.
 # Upon a terraform destroy, the entries will be removed from the ssh config.
 resource "null_resource" "modify_ssh_config" {
-  depends_on = [aws_instance.jumphost,aws_instance.application,aws_eip.database]
+  depends_on = [aws_instance.jumphost, aws_instance.application, aws_eip.database]
   triggers = {
     stage       = var.stage
     env_name    = var.env_name
@@ -29,7 +29,7 @@ resource "null_resource" "modify_ssh_config" {
 # Triggers a bash script that will add the new servers to the ansible inventory host file.
 # Upon a terraform destroy, the entries will be removed from the ansible inventory host file.
 resource "null_resource" "modify_ansible_hosts_ini" {
-  depends_on = [aws_instance.jumphost,aws_instance.application,aws_eip.database]
+  depends_on = [aws_instance.jumphost, aws_instance.application, aws_eip.database]
   triggers = {
     stage    = var.stage
     env_name = var.env_name
@@ -65,6 +65,9 @@ data "template_file" "host_vars_app" {
   vars = {
     SSH__HOST        = "${var.stage}-${var.env_name}-app"
     SERVER__HOSTNAME = "${var.stage}-${var.env_name}-app@local"
+    PRIVATE__IP      = "${aws_instance.application.private_ip}"
+    MONGO__IP        = "${aws_instance.database.private_ip}"
+    MONGO__URI       = "mongodb://${aws_instance.database.private_ip}:27017"
   }
 }
 
@@ -74,6 +77,9 @@ data "template_file" "host_vars_db" {
   vars = {
     SSH__HOST        = "${var.stage}-${var.env_name}-db"
     SERVER__HOSTNAME = "${var.stage}-${var.env_name}-db@local"
+    PRIVATE__IP      = "${aws_instance.database.private_ip}"
+    MONGO__IP        = "${aws_instance.database.private_ip}"
+    MONGO__URI       = "mongodb://${aws_instance.database.private_ip}:27017"
   }
 }
 
@@ -99,7 +105,7 @@ resource "local_file" "host_vars_db" {
 # This is to avoid using personal keys after the setup has been completed.
 # Ansible will use a dedicated automation user and keypair.
 resource "null_resource" "provision_automation_user_on_instances" {
-  depends_on = [null_resource.modify_ssh_config,null_resource.modify_ansible_hosts_ini,local_file.host_vars_app,local_file.host_vars_db,local_file.host_vars_jumphost]
+  depends_on = [null_resource.modify_ssh_config, null_resource.modify_ansible_hosts_ini, local_file.host_vars_app, local_file.host_vars_db, local_file.host_vars_jumphost]
   provisioner "local-exec" {
     command = "ansible-playbook books/provision_automation_user.yaml -e 'ansible_user=ubuntu' -e 'ansible_ssh_private_key_file=~/.ssh/id_rsa' -e 'target_servers=${var.stage}-${var.env_name}-jumphost,${var.stage}-${var.env_name}-app,${var.stage}-${var.env_name}-db'"
     environment = {
@@ -110,3 +116,42 @@ resource "null_resource" "provision_automation_user_on_instances" {
     working_dir = "../../ansible"
   }
 }
+
+resource "null_resource" "provision_database_server" {
+  count      = var.fully_automated_deployment ? 1 : 0
+  depends_on = [null_resource.provision_automation_user_on_instances]
+  provisioner "local-exec" {
+    command     = "ansible-playbook books/provision_db_server.yaml -e 'target_servers=${var.stage}-${var.env_name}-db'"
+    working_dir = "../../ansible"
+  }
+}
+
+resource "null_resource" "populate_mongo_db" {
+  count      = var.fully_automated_deployment ? 1 : 0
+  depends_on = [null_resource.provision_automation_user_on_instances]
+  provisioner "local-exec" {
+    command     = "ansible-playbook books/populate_mongodb.yaml -e 'target_servers=${var.stage}-${var.env_name}-db'"
+    working_dir = "../../ansible"
+  }
+}
+
+resource "null_resource" "provision_application_server" {
+  count      = var.fully_automated_deployment ? 1 : 0
+  depends_on = [null_resource.provision_database_server]
+  provisioner "local-exec" {
+    command     = "ansible-playbook books/provision_app_server.yaml -e 'target_servers=${var.stage}-${var.env_name}-app'"
+    working_dir = "../../ansible"
+  }
+}
+
+resource "null_resource" "deploy_application" {
+  count      = var.fully_automated_deployment ? 1 : 0
+  depends_on = [null_resource.provision_application_server]
+  provisioner "local-exec" {
+    command     = "ansible-playbook books/deploy_application.yaml -e 'target_servers=${var.stage}-${var.env_name}-app'"
+    working_dir = "../../ansible"
+  }
+}
+
+
+
