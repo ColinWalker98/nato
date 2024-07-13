@@ -1,9 +1,11 @@
 #!/bin/bash
 # Assign passed arguments to variables
-jumphost_ip="$1"
-app_ip="$2"
-db_ip="$3"
-stage="$4"
+action="$1"
+jumphost_ip="$2"
+app_ip="$3"
+db_ip="$4"
+stage="$5"
+name="$6"
 
 # SSH Config templates
 jumphost_entry=$(cat <<EOF
@@ -32,6 +34,24 @@ Host ${stage}-db
 EOF
 )
 
+# Function to remove existing SSH config entry.
+remove_ssh_config() {
+    local ssh_config_file="${HOME}/.ssh/config"
+    local existing_host="${1}"
+
+    if [ -f "${ssh_config_file}" ]; then
+        # Remove existing block for the host if it exists
+        awk -v host="${existing_host}" '
+            BEGIN { in_block = 0 }
+            $1 == "Host" && $2 == host { in_block = 1; next }
+            in_block && /^(\s*Host|\s*$)/ { in_block = 0 }
+            !in_block { print }
+        ' "${ssh_config_file}" > "${ssh_config_file}.tmp" && mv "${ssh_config_file}.tmp" "${ssh_config_file}"
+        echo "Entry for ${existing_host} removed from ${ssh_config_file}"
+    else
+        echo "SSH config file not found"
+    fi
+}
 
 # Function to append or replace exsiting SSH config entry.
 append_or_replace_ssh_config() {
@@ -43,7 +63,7 @@ append_or_replace_ssh_config() {
         # Remove existing block for the host if it exists
         awk -v host="${existing_host}" '
             BEGIN { in_block = 0 }
-            $1 == "Host" && $2 == host { in_block = 1; next }
+            $2 == "Host" && $3 == host { in_block = 1; next }
             in_block && /^(\s*Host|\s*$)/ { in_block = 0 }
             !in_block { print }
         ' "${ssh_config_file}" > "${ssh_config_file}.tmp" && mv "${ssh_config_file}.tmp" "${ssh_config_file}"
@@ -59,7 +79,15 @@ append_or_replace_ssh_config() {
     fi
 }
 
-# Call function for each entry
-append_or_replace_ssh_config "${jumphost_entry}" "${stage}-jumphost"
-append_or_replace_ssh_config "${app_entry}" "${stage}-app"
-append_or_replace_ssh_config "${db_entry}" "${stage}-db"
+case "${action}" in
+    "addition")
+        append_or_replace_ssh_config "${jumphost_entry}" "${stage}-${name}-jumphost"
+        append_or_replace_ssh_config "${app_entry}" "${stage}-${name}-app"
+        append_or_replace_ssh_config "${db_entry}" "${stage}-${name}-db"
+        ;;
+    "removal")
+        remove_ssh_config "${stage}-${name}-jumphost"
+        remove_ssh_config "${stage}-${name}-app"
+        remove_ssh_config "${stage}-${name}-db"
+        ;;
+esac

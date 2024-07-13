@@ -1,19 +1,49 @@
 # Triggers a local bash script that will add the provisioned servers to your personal ssh configuration file.
 # This will be at ~/.ssh/config. In case there are any existing configurations present with the same hostname,
 # these will be removed and the new configuration will be added to ensure the latest and updated values.
-resource "null_resource" "add_servers_to_ssh_config" {
+# Upon a terraform destroy, the entries will be removed from the ssh config.
+resource "null_resource" "modify_ssh_config" {
+  triggers = {
+    stage = var.stage
+    env_name = var.env_name
+    j_pub_ip = aws_eip.jumphost.public_ip
+    app_priv_ip = aws_instance.application.private_ip
+    db_priv_ip = aws_instance.database.private_ip
+  }
+
   provisioner "local-exec" {
     command = <<-EOT
-    bash -c "../../terraform_modules/environment/scripts/update_ssh_config.sh ${aws_eip.jumphost.public_ip} ${aws_instance.application.private_ip} ${aws_instance.database.private_ip} ${var.stage} ${var.env_name}"
+    bash -c "../../terraform_modules/environment/scripts/update_ssh_config.sh addition ${self.triggers.j_pub_ip} ${self.triggers.app_priv_ip} ${self.triggers.db_priv_ip} ${self.triggers.stage} ${self.triggers.env_name}"
+  EOT
+  }
+
+  provisioner "local-exec" {
+    when = destroy
+    command = <<-EOT
+    bash -c "../../terraform_modules/environment/scripts/update_ssh_config.sh removal ${self.triggers.j_pub_ip} ${self.triggers.app_priv_ip} ${self.triggers.db_priv_ip} ${self.triggers.stage} ${self.triggers.env_name}"
   EOT
   }
 }
 
 # Triggers a bash script that will add the new servers to the ansible inventory host file.
-resource "null_resource" "add_servers_to_ansible_hosts_ini" {
+# Upon a terraform destroy, the entries will be removed from the ansible inventory host file.
+resource "null_resource" "modify_ansible_hosts_ini" {
+  triggers = {
+    stage = var.stage
+    env_name = var.env_name
+  }
+
+  #${self.triggers.project_id}
   provisioner "local-exec" {
     command = <<-EOT
-    bash -c "../../terraform_modules/environment/scripts/update_ansible_hosts.sh ${var.stage}-${var.env_name}"
+    bash -c "../../terraform_modules/environment/scripts/update_ansible_hosts.sh addition ${self.triggers.stage}-${self.triggers.env_name}"
+  EOT
+  }
+
+  provisioner "local-exec" {
+    when = destroy
+    command = <<-EOT
+    bash -c "../../terraform_modules/environment/scripts/update_ansible_hosts.sh removal ${self.triggers.stage}-${self.triggers.env_name}"
   EOT
   }
 }
