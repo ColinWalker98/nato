@@ -64,3 +64,24 @@
             - mongodb-org-mongos=4.4.29
             - mongodb-org-tools=4.4.29
       when: mongod_version[0] != "4.4.29"
+
+    - name: Ensure MongoD is running and enabled
+      systemd:
+        name: mongod
+        enabled: yes
+        state: started
+
+    - name: Configure MongoDB to allow remote connections
+      lineinfile:
+        path: /etc/mongod.conf
+        regexp: '^  bindIp:.*'
+        line: '  bindIp: 0.0.0.0'
+        state: present
+        backrefs: yes
+      notify: restart_mongodb
+
+  handlers:
+    - name: restart_mongodb
+      systemd:
+        name: mongod
+        state: restarted
