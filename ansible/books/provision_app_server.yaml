@@ -1,8 +1,13 @@
 ---
 - name: Provision Application Server
   hosts: "{{target_servers}}"
+  gather_facts: no
   become: yes
   tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
     - name: Ensure Python 3 is installed
       become: yes
       apt:
@@ -15,29 +20,26 @@
         name: python3-pip
         state: present
 
+    - name: Copy application files to server
+      copy:
+        src: ../../flask_app
+        dest: /opt/flask_app
+
     - name: Install required Python packages from requirements.txt
       become: yes
       pip:
-        requirements: ../../flask_app/requirements.txt
+        requirements: /opt/flask_app/requirements.txt
         state: present
 
-    - name: Copy application files to server
-      copy:
-        src: ../../flask_app  # Replace with your actual Flask application directory
-        dest: /opt/flask_app
-
-    # Task to create systemd service file
     - name: Create systemd service file for Flask application
       template:
         src: templates/flask.systemd.service.j2
         dest: /etc/systemd/system/flask.service
 
-    # Task to reload systemd after service file changes
     - name: Reload systemd
       systemd:
         daemon_reload: yes
 
-    # Task to enable and start the systemd service
     - name: Enable and start Flask application service
       systemd:
         name: flask

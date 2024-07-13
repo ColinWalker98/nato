@@ -19,12 +19,16 @@
 
     - name: Copy application files to server
       copy:
-        src: ../../flask_app  # Replace with your actual Flask application directory
+        src: ../../flask_app
         dest: /opt/flask_app
+
+    - name: Create stage specific dotenv file.
+      template:
+        src: templates/flask.dotenv
+        dest: /opt/flask_app/.env
 
   handlers:
     - name: restart_flask
       systemd:
         name: flask
         state: restarted
-
