@@ -39,6 +39,7 @@ No modules.
 | [aws_lb.loadbalancer](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/lb) | resource |
 | [aws_lb_listener.http](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/lb_listener) | resource |
 | [aws_lb_target_group.http](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/lb_target_group) | resource |
+| [aws_lb_target_group_attachment.test](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/lb_target_group_attachment) | resource |
 | [aws_route.internet_access](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/route) | resource |
 | [aws_security_group.application_access](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/security_group) | resource |
 | [aws_security_group.database_access](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/resources/security_group) | resource |
@@ -50,9 +51,13 @@ No modules.
 | [local_file.host_vars_app](https://registry.terraform.io/providers/hashicorp/local/2.5.1/docs/resources/file) | resource |
 | [local_file.host_vars_db](https://registry.terraform.io/providers/hashicorp/local/2.5.1/docs/resources/file) | resource |
 | [local_file.host_vars_jumphost](https://registry.terraform.io/providers/hashicorp/local/2.5.1/docs/resources/file) | resource |
+| [null_resource.deploy_application](https://registry.terraform.io/providers/hashicorp/null/3.2.2/docs/resources/resource) | resource |
 | [null_resource.modify_ansible_hosts_ini](https://registry.terraform.io/providers/hashicorp/null/3.2.2/docs/resources/resource) | resource |
 | [null_resource.modify_ssh_config](https://registry.terraform.io/providers/hashicorp/null/3.2.2/docs/resources/resource) | resource |
+| [null_resource.populate_mongo_db](https://registry.terraform.io/providers/hashicorp/null/3.2.2/docs/resources/resource) | resource |
+| [null_resource.provision_application_server](https://registry.terraform.io/providers/hashicorp/null/3.2.2/docs/resources/resource) | resource |
 | [null_resource.provision_automation_user_on_instances](https://registry.terraform.io/providers/hashicorp/null/3.2.2/docs/resources/resource) | resource |
+| [null_resource.provision_database_server](https://registry.terraform.io/providers/hashicorp/null/3.2.2/docs/resources/resource) | resource |
 | [random_shuffle.random_private_subnet](https://registry.terraform.io/providers/hashicorp/random/3.6.2/docs/resources/shuffle) | resource |
 | [random_shuffle.random_public_subnet](https://registry.terraform.io/providers/hashicorp/random/3.6.2/docs/resources/shuffle) | resource |
 | [aws_ami.ubuntu](https://registry.terraform.io/providers/hashicorp/aws/5.58.0/docs/data-sources/ami) | data source |
@@ -75,6 +80,7 @@ No modules.
 | <a name="input_custom_subnet_pub_cidrs"></a> [custom\_subnet\_pub\_cidrs](#input\_custom\_subnet\_pub\_cidrs) | Option to override with custom public subnet CIDR. | `list(string)` | `[]` | no |
 | <a name="input_db_instance_type"></a> [db\_instance\_type](#input\_db\_instance\_type) | Instance type override for db instance. If not set, reverts to var.instance\_type. | `string` | `""` | no |
 | <a name="input_env_name"></a> [env\_name](#input\_env\_name) | Name of the environment (Builds up the server name: {{stage-name-app}}). | `string` | `"web"` | no |
+| <a name="input_fully_automated_deployment"></a> [fully\_automated\_deployment](#input\_fully\_automated\_deployment) | Boolean to define whether to perform the full deployment or no. | `bool` | `false` | no |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | Instance type for both app and db servers, by default free tier. | `string` | `"t2.micro"` | no |
 | <a name="input_public_key_path"></a> [public\_key\_path](#input\_public\_key\_path) | Path to the public key, update this path if your key is located elsewhere. | `string` | `"~/.ssh/id_rsa.pub"` | no |
 | <a name="input_stage"></a> [stage](#input\_stage) | Stage of the environments (dev / acc / prod). | `string` | `"dev"` | no |

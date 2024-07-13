@@ -5,6 +5,7 @@ module "acc_app" {
   stage         = "acc"
   env_name      = "web"
   accountid     = "743558884073"
+  fully_automated_deployment = true
 }
 
 

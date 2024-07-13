@@ -1,16 +1,16 @@
 #!/bin/bash
 action="$1"
 hostnames=("${2}-${3}-jumphost" "${2}-${3}-app" "${2}-${3}-db")
-hosts_file="../../ansible/inventory/${2}/hosts.ini"
+hosts_file="../../../ansible/inventory/${2}/hosts.ini"
 echo "Current directory: $(pwd)"
 
 # Detect the operating system (Sed works different on macOS compared to linux.).
 if [[ "$OSTYPE" == "darwin"* ]]; then
   # macOS
-  sed_command="sed -i ''"
+  sed_command="sed -i '' -e"
 else
   # Linux
-  sed_command="sed -i"
+  sed_command="sed -i -e"
 fi
 
 case "${action}" in

@@ -98,6 +98,13 @@
       command: "sudo chown -R mongodb: /var/lib/mongodb/ /tmp/mongodb-27017.sock"
       notify: restart_mongodb
 
+    - name: Call notified handler.
+      meta: flush_handlers
+
+    - name: Pause for 5 seconds to let mongod start.
+      pause:
+        seconds: 5
+
     - name: Create mongodb database and collection
       command: mongo mongodb://localhost:27017/web --eval "db.getCollectionNames().indexOf('customers') === -1 && db.createCollection('customers')"
 
