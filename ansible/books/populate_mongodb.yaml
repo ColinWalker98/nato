@@ -1,0 +1,14 @@
+---
+- name: Insert Mock Data into MongoDB
+  hosts: "{{target_servers}}"
+  gather_facts: no
+  become: yes
+  tasks:
+    - name: Copy insert_data.py script to remote host
+      template:
+        src: templates/insert_data.py.j2
+        dest: /opt/insert_data.py
+        mode: 0755
+
+    - name: Execute insert_data.py script
+      command: /usr/bin/python3 /opt/insert_data.py

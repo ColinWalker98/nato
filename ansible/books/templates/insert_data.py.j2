@@ -1,0 +1,27 @@
+from pymongo import MongoClient
+
+
+# Connect to MongoDB
+client = MongoClient("{{mongo_uri}}")
+
+# Select database
+db = client['web']
+
+# Select collection
+collection = db['customers']
+
+# Sample data to insert
+data = [
+    {"name": "Alice", "email": "alice@example.com"},
+    {"name": "Bob", "email": "bob@example.com"},
+    {"name": "Charlie", "email": "charlie@example.com"}
+]
+
+# Insert data into MongoDB
+result = collection.insert_many(data)
+
+# Print the inserted IDs
+print("Inserted IDs:", result.inserted_ids)
+
+# Close the MongoDB connection
+client.close()

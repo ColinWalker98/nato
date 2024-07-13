@@ -2,7 +2,9 @@
 - name: Provision Database Server
   hosts: "{{target_servers}}"
   gather_facts: no
-  become: yes
+  become:
+  vars:
+    mongo_uri_localhost: "mongodb://localhost:27017/"
   tasks:
     - name: Get MongoDB version
       command: mongod --version
@@ -78,10 +80,17 @@
         line: '  bindIp: 0.0.0.0'
         state: present
         backrefs: yes
+
+    - name: Correct permissions for mongod service
+      command: "sudo chown -R mongodb: /var/lib/mongodb/ /tmp/mongodb-27017.sock"
       notify: restart_mongodb
+
+    - name: Create mongodb database and collection
+      command: mongo mongodb://localhost:27017/web --eval "db.getCollectionNames().indexOf('customers') === -1 && db.createCollection('customers')"
 
   handlers:
     - name: restart_mongodb
+      become: true
       systemd:
         name: mongod
         state: restarted

@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User=ubuntu
 WorkingDirectory=/opt/flask_app
-ExecStart=/usr/bin/python3 /opt/flask_app/app.py
+ExecStart=/usr/bin/python3 /opt/flask_app/run.py
 Restart=always
 StandardOutput=append:/var/log/flask/app.log
 StandardError=append:/var/log/flask/app.log

@@ -20,6 +20,9 @@
         name: python3-pip
         state: present
 
+    - name: Allow tcp traffic on port 80.
+      command: sudo ufw allow 80/tcp
+
     - name: Create log directory for Flask application
       file:
         path: /var/log/flask
@@ -27,17 +30,6 @@
         owner: ubuntu
         group: ubuntu
         mode: '0755'
-
-    - name: Copy application files to server
-      copy:
-        src: ../../flask_app
-        dest: /opt
-
-    - name: Install required Python packages from requirements.txt
-      become: yes
-      pip:
-        requirements: /opt/flask_app/requirements.txt
-        state: present
 
     - name: Create systemd service file for Flask application
       template:
@@ -47,9 +39,3 @@
     - name: Reload systemd
       systemd:
         daemon_reload: yes
-
-    - name: Enable and start Flask application service
-      systemd:
-        name: flask
-        state: started
-        enabled: yes
