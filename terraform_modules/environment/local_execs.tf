@@ -1,9 +1,12 @@
-provisioner "local-exec" {
-  command = <<-EOT
+resource "null_resource" "add_servers_to_ssh" {
+  provisioner "local-exec" {
+    command = <<-EOT
     bash -c "scripts/update_ssh_config.sh ${aws_instance.jumphost.private_ip} ${aws_instance.application.private_ip} ${aws_instance.database.private_ip} ${var.stage}"
   EOT
-  when    = "apply"
+  }
 }
+
+
 
 #resource "null_resource" "add_automation_user" {
 #  provisioner "local-exec" {
