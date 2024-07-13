@@ -52,7 +52,7 @@ variable "stage" {
   type        = string
   default     = "dev"
   validation {
-    condition = can(regex("^(dev|acc|prod)$", var.stage))
+    condition     = can(regex("^(dev|acc|prod)$", var.stage))
     error_message = "Stage must be one of 'dev', 'acc', or 'prod'."
   }
 }

@@ -4,11 +4,11 @@
 # Upon a terraform destroy, the entries will be removed from the ssh config.
 resource "null_resource" "modify_ssh_config" {
   triggers = {
-    stage = var.stage
-    env_name = var.env_name
-    j_pub_ip = aws_eip.jumphost.public_ip
+    stage       = var.stage
+    env_name    = var.env_name
+    j_pub_ip    = aws_eip.jumphost.public_ip
     app_priv_ip = aws_instance.application.private_ip
-    db_priv_ip = aws_instance.database.private_ip
+    db_priv_ip  = aws_instance.database.private_ip
   }
 
   provisioner "local-exec" {
@@ -18,7 +18,7 @@ resource "null_resource" "modify_ssh_config" {
   }
 
   provisioner "local-exec" {
-    when = destroy
+    when    = destroy
     command = <<-EOT
     bash -c "../../terraform_modules/environment/scripts/update_ssh_config.sh removal ${self.triggers.j_pub_ip} ${self.triggers.app_priv_ip} ${self.triggers.db_priv_ip} ${self.triggers.stage} ${self.triggers.env_name}"
   EOT
@@ -29,7 +29,7 @@ resource "null_resource" "modify_ssh_config" {
 # Upon a terraform destroy, the entries will be removed from the ansible inventory host file.
 resource "null_resource" "modify_ansible_hosts_ini" {
   triggers = {
-    stage = var.stage
+    stage    = var.stage
     env_name = var.env_name
   }
 
@@ -41,7 +41,7 @@ resource "null_resource" "modify_ansible_hosts_ini" {
   }
 
   provisioner "local-exec" {
-    when = destroy
+    when    = destroy
     command = <<-EOT
     bash -c "../../terraform_modules/environment/scripts/update_ansible_hosts.sh removal ${self.triggers.stage} ${self.triggers.env_name}"
   EOT
