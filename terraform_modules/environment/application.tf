@@ -1,3 +1,4 @@
+# Creates a static elastic ip reserved for the application server.
 resource "aws_eip" "application" {
   depends_on = [aws_instance.application]
   instance   = aws_instance.application.id
@@ -7,6 +8,7 @@ resource "aws_eip" "application" {
   }
 }
 
+# Create the ec2 instance (server) to deploy the application on (not publicly accessible).
 resource "aws_instance" "application" {
   depends_on             = [aws_key_pair.deployer]
   ami                    = data.aws_ami.ubuntu.id

@@ -1,3 +1,4 @@
+# Creates a listener, the load balancer will then actively listen on this port / protocol.
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.loadbalancer.arn
   port              = 80
@@ -9,6 +10,7 @@ resource "aws_lb_listener" "http" {
   }
 }
 
+# Creates a target group, which is used to forward traffic to the targets when received on the load balancer.
 resource "aws_lb_target_group" "http" {
   name     = "application-server-tg-http"
   port     = 80
@@ -16,6 +18,7 @@ resource "aws_lb_target_group" "http" {
   vpc_id   = aws_vpc.default.id
 }
 
+# Creates the load balancer itself and assigns a subnet and security group (firewall).
 resource "aws_lb" "loadbalancer" {
   name               = "${var.stage}-lb"
   internal           = false

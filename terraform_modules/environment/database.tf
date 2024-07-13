@@ -1,3 +1,4 @@
+# Creates a static elastic ip reserved for the database server.
 resource "aws_eip" "database" {
   depends_on = [aws_instance.database]
   instance   = aws_instance.database.id
@@ -7,6 +8,7 @@ resource "aws_eip" "database" {
   }
 }
 
+# Create the ec2 instance (server) to deploy the database on (not publicly accessible).
 resource "aws_instance" "database" {
   depends_on             = [aws_key_pair.deployer]
   ami                    = data.aws_ami.ubuntu.id

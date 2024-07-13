@@ -1,14 +1,7 @@
-#--------------------------------------------------------------
-# This module creates all resources necessary for a vpc
-#--------------------------------------------------------------
-
+# Fetch available subnets in the provided region.
 data "aws_availability_zones" "available" {}
 
-#--------------------------------------------------------------
-# Setup
-#--------------------------------------------------------------
-
-# Create a VPC
+# Create a VPC.
 resource "aws_vpc" "default" {
   cidr_block           = local.cidr_block
   enable_dns_hostnames = true
@@ -18,7 +11,7 @@ resource "aws_vpc" "default" {
   }
 }
 
-# Create an internet gateway to give our subnet access to the outside world
+# Create an internet gateway to give our subnet access to the outside world.
 resource "aws_internet_gateway" "default" {
   vpc_id = aws_vpc.default.id
 
@@ -27,14 +20,14 @@ resource "aws_internet_gateway" "default" {
   }
 }
 
-# Grant the VPC internet access on its main route table
+# Grant the VPC internet access on its main route table.
 resource "aws_route" "internet_access" {
   route_table_id         = aws_vpc.default.main_route_table_id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.default.id
 }
 
-# Create public subnets
+# Create public subnets.
 resource "aws_subnet" "default_public" {
   count                   = var.sub_count
   vpc_id                  = aws_vpc.default.id
@@ -47,7 +40,7 @@ resource "aws_subnet" "default_public" {
   }
 }
 
-# Create private subnet
+# Create 'private' subnet.
 resource "aws_subnet" "default_private" {
   count             = var.sub_count
   vpc_id            = aws_vpc.default.id

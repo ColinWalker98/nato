@@ -1,3 +1,4 @@
+# Creates a static elastic ip reserved for the jumphost server.
 resource "aws_eip" "jumphost" {
   depends_on = [aws_instance.jumphost]
   instance   = aws_instance.jumphost.id
@@ -7,6 +8,7 @@ resource "aws_eip" "jumphost" {
   }
 }
 
+# Create the ec2 instance (server) that will act as jumphost (publicly accessible).
 resource "aws_instance" "jumphost" {
   depends_on             = [aws_key_pair.deployer]
   ami                    = data.aws_ami.ubuntu.id

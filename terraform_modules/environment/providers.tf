@@ -5,6 +5,7 @@ provider "aws" {
   }
 }
 
+# Specify required providers and their respective version used in this module.
 terraform {
   required_version = "1.9.2"
   required_providers {
