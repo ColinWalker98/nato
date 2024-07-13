@@ -1,5 +1,5 @@
 ---
-- name: Setup MongoDB Server
+- name: Provision Database Server
   hosts: "{{target_servers}}"
   gather_facts: no
   become: yes

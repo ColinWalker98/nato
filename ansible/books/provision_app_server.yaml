@@ -1,5 +1,5 @@
 ---
-- name: Deploy Flask Application
+- name: Provision Application Server
   hosts: "{{target_servers}}"
   become: yes
   tasks:

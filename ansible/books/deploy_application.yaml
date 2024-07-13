@@ -1,0 +1,30 @@
+---
+- name: Deploy Flask Application
+  hosts: "{{target_servers}}"
+  become: yes
+  tasks:
+    - name: Ensure Python 3 is installed
+      become: yes
+      apt:
+        name:
+        - python3
+        - python3-pip
+        state: present
+
+    - name: Ensure required Python packages from requirements.txt are installed
+      become: yes
+      pip:
+        requirements: ../../flask_app/requirements.txt
+        state: present
+
+    - name: Copy application files to server
+      copy:
+        src: ../../flask_app  # Replace with your actual Flask application directory
+        dest: /opt/flask_app
+
+  handlers:
+    - name: restart_flask
+      systemd:
+        name: flask
+        state: restarted
+
