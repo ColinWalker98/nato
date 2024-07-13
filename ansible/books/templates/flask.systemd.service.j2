@@ -5,10 +5,13 @@ After=network.target
 [Service]
 User=ubuntu
 WorkingDirectory=/opt/flask_app
+EnvironmentFile=/opt/flask_app/.env
 ExecStart=/usr/bin/python3 /opt/flask_app/run.py
 Restart=always
 StandardOutput=append:/var/log/flask/app.log
 StandardError=append:/var/log/flask/app.log
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+AmbientCapabilities=CAP_NET_BIND_SERVICE
 
 [Install]
 WantedBy=multi-user.target

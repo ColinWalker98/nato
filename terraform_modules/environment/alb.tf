@@ -18,6 +18,13 @@ resource "aws_lb_target_group" "http" {
   vpc_id   = aws_vpc.default.id
 }
 
+# Register the application instance as a target.
+resource "aws_lb_target_group_attachment" "test" {
+  target_group_arn = aws_lb_target_group.http.arn
+  target_id        = aws_instance.application.id
+  port             = 80
+}
+
 # Creates the load balancer itself and assigns a subnet and security group (firewall).
 resource "aws_lb" "loadbalancer" {
   name               = "${var.stage}-${var.env_name}-lb"

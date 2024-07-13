@@ -28,10 +28,18 @@
       pip:
         requirements: /opt/flask_app/requirements.txt
         state: present
+
+    - name: Correct owner of files.
+      become: yes
+      command: "chown -R ubuntu: /opt/flask_app /etc/systemd/system/flask.service"
+
+    - name: Correct permissions of files.
+      become: yes
+      command: "chmod -R 755 /opt/flask_app"
+      changed_when: True
       notify: restart_flask
 
   handlers:
     - name: restart_flask
-      systemd:
-        name: flask
-        state: restarted
+      become_user: ubuntu
+      command: "sudo service flask restart"
