@@ -17,7 +17,7 @@ resource "null_resource" "add_servers_to_ansible_hosts_ini" {
 data "template_file" "host_vars_jumphost" {
   template = file("../../terraform_modules/environment/templates/ansible_hostvar.tpl")
   vars = {
-    SSH__HOST = "${var.stage}-jumphost"
+    SSH__HOST        = "${var.stage}-jumphost"
     SERVER__HOSTNAME = "${var.stage}-jumphost@local"
   }
 }
@@ -25,7 +25,7 @@ data "template_file" "host_vars_jumphost" {
 data "template_file" "host_vars_app" {
   template = file("../../terraform_modules/environment/templates/ansible_hostvar.tpl")
   vars = {
-    SSH__HOST = "${var.stage}-app"
+    SSH__HOST        = "${var.stage}-app"
     SERVER__HOSTNAME = "${var.stage}-app@local"
   }
 }
@@ -33,7 +33,7 @@ data "template_file" "host_vars_app" {
 data "template_file" "host_vars_db" {
   template = file("../../terraform_modules/environment/templates/ansible_hostvar.tpl")
   vars = {
-    SSH__HOST = "${var.stage}-db"
+    SSH__HOST        = "${var.stage}-db"
     SERVER__HOSTNAME = "${var.stage}-db@local"
   }
 }
@@ -59,8 +59,8 @@ resource "null_resource" "provision_automation_user_on_instances" {
     command = "ansible-playbook books/provision_automation_user.yaml -e 'ansible_user=ubuntu' -e 'ansible_ssh_private_key_file=~/.ssh/id_rsa' -e 'target_servers=${var.stage}-jumphost,${var.stage}-app,${var.stage}-db'"
     environment = {
       ANSIBLE_HOST_KEY_CHECKING = "False"
-      ANSIBLE_USER = "ubuntu"
-      ANSIBLE_SSH_PRIVATE_KEY = "~/.ssh/id_rsa"
+      ANSIBLE_USER              = "ubuntu"
+      ANSIBLE_SSH_PRIVATE_KEY   = "~/.ssh/id_rsa"
     }
     working_dir = "../../ansible"
   }
