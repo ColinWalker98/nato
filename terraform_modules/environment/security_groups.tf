@@ -1,7 +1,7 @@
 # Allows SSH 22 access from the provided IP range to the jumphost.
 resource "aws_security_group" "jumphost_access" {
   name        = "access-to-${var.stage}-${var.env_name}-jumphost"
-  description = "Allow external traffic to the jumphost."
+  description = "Allow external 22 traffic to the jumphost."
   vpc_id      = aws_vpc.default.id
 
   ingress {
@@ -22,7 +22,7 @@ resource "aws_security_group" "jumphost_access" {
 # Allows HTTP 80 access from the provided IP range to the load balancer.
 resource "aws_security_group" "loadbalancer_access" {
   name        = "access-to-${var.stage}-${var.env_name}-loadbalancer"
-  description = "Allow external traffic to the loadbalancer."
+  description = "Allow external 80 traffic to the loadbalancer."
   vpc_id      = aws_vpc.default.id
 
   ingress {
@@ -43,7 +43,7 @@ resource "aws_security_group" "loadbalancer_access" {
 # Allows SSH 22 access from the jumphost and HTTP 80 from the load balancer.
 resource "aws_security_group" "application_access" {
   name        = "access-to-${var.stage}-${var.env_name}-app"
-  description = "Allow traffic from Loadbalancer to Application server."
+  description = "Allow internal 22,80 traffic to Application server."
   vpc_id      = aws_vpc.default.id
 
   ingress {
@@ -68,15 +68,15 @@ resource "aws_security_group" "application_access" {
   }
 }
 
-# Allows SSH 22 access from the jumphost and MYSQL 3306 from the application server.
+# Allows SSH 22 access from the jumphost and Mongodb 27017 from the application server.
 resource "aws_security_group" "database_access" {
   name        = "access-to-${var.stage}-${var.env_name}-db"
-  description = "Allow traffic from Application server to Database server."
+  description = "Allow internal 22,27017 traffic to Database server."
   vpc_id      = aws_vpc.default.id
 
   ingress {
-    from_port       = 3306
-    to_port         = 3306
+    from_port       = 27017
+    to_port         = 27017
     protocol        = "tcp"
     security_groups = [aws_security_group.application_access.id]
   }
