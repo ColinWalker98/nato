@@ -1,0 +1,48 @@
+---
+- name: Provision automation user with passwordless sudo
+  hosts: "{{target_servers}}"
+  gather_facts: no
+  become: yes
+  serial: 1
+  vars:
+    automation_user: "automation"
+    automation_public_key_file: "~/.ssh/automation.key.pub"
+  tasks:
+    - name: Create automation user
+      user:
+        name: "{{ automation_user }}"
+        shell: /bin/bash
+        createhome: yes
+
+    - name: Upload SSH public key for automation user
+      authorized_key:
+        user: "{{ automation_user }}"
+        key: "{{ lookup('file', automation_public_key_file) }}"
+
+    - name: Allow automation user passwordless sudo
+      lineinfile:
+        dest: /etc/sudoers.d/automation
+        line: "{{ automation_user }} ALL=(ALL) NOPASSWD:ALL"
+        create: yes
+        validate: 'visudo -cf %s'
+
+    - name: Set permissions on sudoers file
+      file:
+        path: /etc/sudoers.d/automation
+        owner: root
+        group: root
+        mode: '0440'
+
+    - name: Reload sudo after configuration change
+      command: sudo --validate --validate
+
+    - name: Display completion message
+      debug:
+        msg: "automation user configured with passwordless sudo and SSH key."
+
+  handlers:
+    # Optional: Restart sshd to apply SSH configuration (only if necessary)
+    - name: Restart sshd
+      service:
+        name: sshd
+        state: restarted
