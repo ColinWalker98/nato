@@ -3,6 +3,7 @@
 # these will be removed and the new configuration will be added to ensure the latest and updated values.
 # Upon a terraform destroy, the entries will be removed from the ssh config.
 resource "null_resource" "modify_ssh_config" {
+  depends_on = [aws_instance.jumphost,aws_instance.application,aws_eip.database]
   triggers = {
     stage       = var.stage
     env_name    = var.env_name
@@ -28,6 +29,7 @@ resource "null_resource" "modify_ssh_config" {
 # Triggers a bash script that will add the new servers to the ansible inventory host file.
 # Upon a terraform destroy, the entries will be removed from the ansible inventory host file.
 resource "null_resource" "modify_ansible_hosts_ini" {
+  depends_on = [aws_instance.jumphost,aws_instance.application,aws_eip.database]
   triggers = {
     stage    = var.stage
     env_name = var.env_name
@@ -97,6 +99,7 @@ resource "local_file" "host_vars_db" {
 # This is to avoid using personal keys after the setup has been completed.
 # Ansible will use a dedicated automation user and keypair.
 resource "null_resource" "provision_automation_user_on_instances" {
+  depends_on = [aws_instance.jumphost,aws_instance.application,aws_eip.database]
   provisioner "local-exec" {
     command = "ansible-playbook books/provision_automation_user.yaml -e 'ansible_user=ubuntu' -e 'ansible_ssh_private_key_file=~/.ssh/id_rsa' -e 'target_servers=${var.stage}-${var.env_name}-jumphost,${var.stage}-${var.env_name}-app,${var.stage}-${var.env_name}-db'"
     environment = {

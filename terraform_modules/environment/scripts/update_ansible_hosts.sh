@@ -2,6 +2,16 @@
 action="$1"
 hostnames=("${2}-${3}-jumphost" "${2}-${3}-app" "${2}-${3}-db")
 hosts_file="../../ansible/inventory/${2}/hosts.ini"
+echo "Current directory: $(pwd)"
+
+# Detect the operating system (Sed works different on macOS compared to linux.).
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  # macOS
+  sed_command="sed -i ''"
+else
+  # Linux
+  sed_command="sed -i"
+fi
 
 case "${action}" in
   "addition")
@@ -21,7 +31,7 @@ case "${action}" in
       # Check if the hostname exists in the hosts file.
       if grep -q "^$hostname$" "$hosts_file"; then
           # Remove the hostname from the hosts file.
-          sed -i "/^$hostname$/d" "$hosts_file"
+          $sed_command "/^$hostname$/d" "$hosts_file"
           echo "Hostname $hostname removed from $hosts_file."
       else
           echo "Hostname $hostname does not exist in $hosts_file."

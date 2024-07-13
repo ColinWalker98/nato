@@ -3,7 +3,7 @@ module "acc_app" {
   aws_region    = "eu-west-1"
   instance_type = "t2.micro"
   stage         = "acc"
-  env_name      = "colin"
+  env_name      = "web"
   accountid     = "743558884073"
 }
 
