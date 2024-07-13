@@ -1,12 +1,10 @@
 ansible_ssh_host: dev-web-app
 ansible_user: automation
 ansible_ssh_private_key_file: ~/.ssh/automation.key
-server_hostname: dev-web-app@local
-private_ip: "10.2.2.136"
-
+server_hostname: "dev-web-app@local"
+private_ip: "10.2.1.112"
 debug_mode: "True"
-mongo_user_name: "admin"
-mongo_user_password: "adminpass"
-mongo_uri: "mongodb://10.2.2.159:27017"
-mongo_ip: "10.2.2.159"
+mongo_uri: "mongodb://10.2.1.169:27017"
+mongo_ip: "10.2.1.169"
 mongo_port: "27017"
+loadbalancer_public_dns: "dev-web-lb-1693250907.eu-central-1.elb.amazonaws.com"

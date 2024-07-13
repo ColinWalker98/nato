@@ -38,11 +38,7 @@
 
     - name: Correct owner of files.
       become: yes
-      command: "chown -R ubuntu: /opt/flask_app /etc/systemd/system/flask.service"
-
-    - name: Correct permissions of files.
-      become: yes
-      command: "chmod -R 755 /opt/flask_app"
+      command: "chown -R ubuntu: /etc/systemd/system/flask.service"
 
     - name: Reload systemd
       systemd:

@@ -31,7 +31,7 @@
 
     - name: Correct owner of files.
       become: yes
-      command: "chown -R ubuntu: /opt/flask_app /etc/systemd/system/flask.service"
+      command: "chown -R ubuntu: /opt/flask_app"
 
     - name: Correct permissions of files.
       become: yes

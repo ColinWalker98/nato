@@ -1,9 +1,10 @@
 ansible_ssh_host: ${SSH__HOST}
 ansible_user: automation
 ansible_ssh_private_key_file: ~/.ssh/automation.key
-server_hostname: ${SERVER__HOSTNAME}
-private_ip: ${PRIVATE__IP}
+server_hostname: "${SERVER__HOSTNAME}"
+private_ip: "${PRIVATE__IP}"
 debug_mode: "True"
-mongo_uri: ${MONGO__URI}"
-mongo_ip: ${MONGO__IP}
+mongo_uri: "${MONGO__URI}"
+mongo_ip: "${MONGO__IP}"
 mongo_port: "27017"
+loadbalancer_public_dns: "${LB__DNS}"

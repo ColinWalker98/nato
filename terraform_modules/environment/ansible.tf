@@ -56,9 +56,10 @@ data "template_file" "host_vars_jumphost" {
   vars = {
     SSH__HOST        = "${var.stage}-${var.env_name}-jumphost"
     SERVER__HOSTNAME = "${var.stage}-${var.env_name}-jumphost@local"
-    PRIVATE__IP      = "${aws_instance.jumphost.private_ip}"
-    MONGO__IP        = "${aws_instance.database.private_ip}"
+    PRIVATE__IP      = aws_instance.jumphost.private_ip
+    MONGO__IP        = aws_instance.database.private_ip
     MONGO__URI       = "mongodb://${aws_instance.database.private_ip}:27017"
+    LB__DNS          = aws_lb.loadbalancer.dns_name
   }
 }
 
@@ -68,9 +69,10 @@ data "template_file" "host_vars_app" {
   vars = {
     SSH__HOST        = "${var.stage}-${var.env_name}-app"
     SERVER__HOSTNAME = "${var.stage}-${var.env_name}-app@local"
-    PRIVATE__IP      = "${aws_instance.application.private_ip}"
-    MONGO__IP        = "${aws_instance.database.private_ip}"
+    PRIVATE__IP      = aws_instance.application.private_ip
+    MONGO__IP        = aws_instance.database.private_ip
     MONGO__URI       = "mongodb://${aws_instance.database.private_ip}:27017"
+    LB__DNS          = aws_lb.loadbalancer.dns_name
   }
 }
 
@@ -80,9 +82,10 @@ data "template_file" "host_vars_db" {
   vars = {
     SSH__HOST        = "${var.stage}-${var.env_name}-db"
     SERVER__HOSTNAME = "${var.stage}-${var.env_name}-db@local"
-    PRIVATE__IP      = "${aws_instance.database.private_ip}"
-    MONGO__IP        = "${aws_instance.database.private_ip}"
+    PRIVATE__IP      = aws_instance.database.private_ip
+    MONGO__IP        = aws_instance.database.private_ip
     MONGO__URI       = "mongodb://${aws_instance.database.private_ip}:27017"
+    LB__DNS          = aws_lb.loadbalancer.dns_name
   }
 }
 
@@ -120,6 +123,7 @@ resource "null_resource" "provision_automation_user_on_instances" {
   }
 }
 
+# Calls an ansible playbook to provision the mongodb database server.
 resource "null_resource" "provision_database_server" {
   count      = var.fully_automated_deployment ? 1 : 0
   depends_on = [null_resource.provision_automation_user_on_instances]
@@ -129,27 +133,30 @@ resource "null_resource" "provision_database_server" {
   }
 }
 
+# Calls an ansible playbook to populate the mongodb database server (run from the application server).
 resource "null_resource" "populate_mongo_db" {
   count      = var.fully_automated_deployment ? 1 : 0
-  depends_on = [null_resource.provision_automation_user_on_instances]
+  depends_on = [null_resource.deploy_application[0]]
   provisioner "local-exec" {
-    command     = "ansible-playbook books/populate_mongodb.yaml -e 'target_servers=${var.stage}-${var.env_name}-db'"
+    command     = "ansible-playbook books/populate_mongodb.yaml -e 'target_servers=${var.stage}-${var.env_name}-app'"
     working_dir = "../../ansible"
   }
 }
 
+# Calls an ansible playbook to provision the application server.
 resource "null_resource" "provision_application_server" {
   count      = var.fully_automated_deployment ? 1 : 0
-  depends_on = [null_resource.provision_database_server]
+  depends_on = [null_resource.provision_database_server[0]]
   provisioner "local-exec" {
     command     = "ansible-playbook books/provision_app_server.yaml -e 'target_servers=${var.stage}-${var.env_name}-app'"
     working_dir = "../../ansible"
   }
 }
 
+# Calls an ansible playbook to deploy the flask application.
 resource "null_resource" "deploy_application" {
   count      = var.fully_automated_deployment ? 1 : 0
-  depends_on = [null_resource.provision_application_server]
+  depends_on = [null_resource.provision_application_server[0]]
   provisioner "local-exec" {
     command     = "ansible-playbook books/deploy_application.yaml -e 'target_servers=${var.stage}-${var.env_name}-app'"
     working_dir = "../../ansible"

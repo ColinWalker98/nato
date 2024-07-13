@@ -2,33 +2,46 @@
 - name: Provision Database Server
   hosts: "{{target_servers}}"
   gather_facts: no
-  become:
+  become: yes
   vars:
     mongo_uri_localhost: "mongodb://localhost:27017/"
+    mongod_version: ["0.0.0"]
   tasks:
-    - name: Get MongoDB version
-      command: mongod --version
-      register: mongod_version_output
+    - name: Check if MongoDB is already installed
+      command: which mongod
+      register: mongod_installed
       ignore_errors: yes
 
-    - name: Parse MongoDB version
-      set_fact:
-        mongod_version: "{{ mongod_version_output.stdout | regex_search('db version v([0-9.]+)', '\\1') }}"
-      when: mongod_version_output is defined and mongod_version_output.rc == 0
+    - name: Validate existing mongod version
+      block:
+        - name: Get MongoDB version
+          command: mongod --version
+          register: mongod_version_response
+          ignore_errors: yes
 
-    - name: Check MongoDB version
-      debug:
-        msg: "Installed MongoDB version: {{ mongod_version }}"
+        - name: Set mongo_version_output variables
+          set_fact:
+            mongod_version_output: "{{mongod_version_response | default('version_not_found')}}"
 
-    - name: Confirm correct MongoDB version
-      debug:
-        msg: "Correct MongoDB version (4.4.29) is installed."
-      when: mongod_version[0] == "4.4.29"
+        - name: Parse MongoDB version
+          set_fact:
+            mongod_version: "{{ mongod_version_output.stdout | regex_search('db version v([0-9.]+)', '\\1') | default(['version_not_found'])}}"
+          when: mongod_version_output is defined
 
-    - name: Print MongoDB version is incorrect
-      debug:
-        msg: "Wrong MongoDB version installed: {{ mongod_version[0] }}. Expected version: 4.4.29"
-      when: mongod_version[0] != "4.4.29"
+        - name: Check MongoDB version
+          debug:
+            msg: "Installed MongoDB version: {{ mongod_version }}"
+
+        - name: Confirm correct MongoDB version
+          debug:
+            msg: "Correct MongoDB version (4.4.29) is installed."
+          when: mongod_version[0] == "4.4.29"
+
+        - name: Print MongoDB version is incorrect
+          debug:
+            msg: "Wrong MongoDB version installed: {{ mongod_version[0] }}. Expected version: 4.4.29"
+          when: mongod_version[0] != "4.4.29"
+      when: mongod_installed.stdout != ""
 
     - name: MongoDB incorrect version removal and installation of expected version.
       block:

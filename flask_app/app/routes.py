@@ -9,5 +9,6 @@ def index():
 def get_data():
     customer_coll = db.customers
     customers = customer_coll.find()
-    result = [{"name": item["name"], "value": item["value"]} for item in customers]
+    print(customers)
+    result = [{"name": item["name"], "email": item["email"]} for item in customers]
     return render_template('data.html', title="Data", data=result)

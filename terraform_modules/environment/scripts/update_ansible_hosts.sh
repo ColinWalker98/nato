@@ -17,24 +17,26 @@ case "${action}" in
   "addition")
     for hostname in "${hostnames[@]}"; do
       # Check if the hostname already exists in the hosts file.
-      if grep -q "^$hostname$" "$hosts_file"; then
-          echo "Hostname $hostname already exists in $hosts_file."
+      if grep -q "^${hostname}$" "${hosts_file}"; then
+          echo "Hostname ${hostname} already exists in ${hosts_file}."
       else
           # Add the hostname to the end of the hosts file.
-          echo "$hostname" >> "$hosts_file"
-          echo "Hostname $hostname added to $hosts_file."
+          echo "${hostname}" >> "${hosts_file}"
+          echo "Hostname ${hostname} added to ${hosts_file}."
+          sleep 5
       fi
     done
     ;;
   "removal")
     for hostname in "${hostnames[@]}"; do
       # Check if the hostname exists in the hosts file.
-      if grep -q "^$hostname$" "$hosts_file"; then
+      if grep -q "^${hostname}$" "${hosts_file}"; then
           # Remove the hostname from the hosts file.
-          $sed_command "/^$hostname$/d" "$hosts_file"
-          echo "Hostname $hostname removed from $hosts_file."
+          $sed_command "/^${hostname}$/d" "${hosts_file}"
+          echo "Hostname ${hostname} removed from ${hosts_file}."
+          sleep 5
       else
-          echo "Hostname $hostname does not exist in $hosts_file."
+          echo "Hostname ${hostname} does not exist in ${hosts_file}."
       fi
     done
     ;;
