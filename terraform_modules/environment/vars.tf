@@ -48,10 +48,14 @@ variable "allowed_ssh_access" {
 }
 
 variable "stage" {
-  description = "Stage of the environments (dev / acceptance / production)."
+  description = "Stage of the environments (dev / acc / prod)."
   type        = string
   default     = "dev"
   required    = yes
+  validation {
+    condition = can(regex("^(dev|acc|prod)$", var.stage))
+    error_message = "Stage must be one of 'dev', 'acc', or 'prod'."
+  }
 }
 
 variable "vpc_name" {
