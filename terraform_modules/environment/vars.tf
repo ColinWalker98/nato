@@ -15,7 +15,7 @@ variable "aws_region" {
 variable "accountid" {
   description = "Defines the aws account in which to deploy the resources."
   type        = string
-  required    = yes
+  nullable    = false
 }
 
 variable "instance_type" {
@@ -51,7 +51,6 @@ variable "stage" {
   description = "Stage of the environments (dev / acc / prod)."
   type        = string
   default     = "dev"
-  required    = yes
   validation {
     condition = can(regex("^(dev|acc|prod)$", var.stage))
     error_message = "Stage must be one of 'dev', 'acc', or 'prod'."
