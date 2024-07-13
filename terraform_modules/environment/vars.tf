@@ -57,6 +57,12 @@ variable "stage" {
   }
 }
 
+variable "name" {
+  description = "Name of the environment (Builds up the server name: {{stage-name-app}})."
+  type        = string
+  default     = "web"
+}
+
 variable "vpc_name" {
   description = "Name of the vpc."
   type        = string

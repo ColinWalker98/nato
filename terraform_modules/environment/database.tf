@@ -4,7 +4,7 @@ resource "aws_eip" "database" {
   instance   = aws_instance.database.id
   domain     = "vpc"
   tags = {
-    "Name" : "${var.stage}-db-eip"
+    "Name" : "${var.stage}-${var.name}-db-eip"
   }
 }
 
@@ -23,6 +23,6 @@ resource "aws_instance" "database" {
   }
 
   tags = {
-    Name = "${var.stage}-db"
+    Name = "${var.stage}-${var.name}-db"
   }
 }
