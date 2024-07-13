@@ -20,7 +20,7 @@ app_entry=$(cat <<EOF
 Host ${stage}-${name}-app
   HostName ${app_ip}
   User ubuntu
-  ProxyJump ${stage}-jumphost
+  ProxyJump ${stage}-${name}-jumphost
   IdentityFile ~/.ssh/id_rsa
 EOF
 )
@@ -29,7 +29,7 @@ db_entry=$(cat <<EOF
 Host ${stage}-${name}-db
   HostName ${db_ip}
   User ubuntu
-  ProxyJump ${stage}-jumphost
+  ProxyJump ${stage}-${name}-jumphost
   IdentityFile ~/.ssh/id_rsa
 EOF
 )
