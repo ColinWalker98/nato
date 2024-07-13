@@ -9,7 +9,7 @@ name="$6"
 
 # SSH Config templates
 jumphost_entry=$(cat <<EOF
-Host ${stage}-jumphost
+Host ${stage}-${name}-jumphost
   HostName ${jumphost_ip}
   User ubuntu
   IdentityFile ~/.ssh/id_rsa
@@ -17,7 +17,7 @@ EOF
 )
 
 app_entry=$(cat <<EOF
-Host ${stage}-app
+Host ${stage}-${name}-app
   HostName ${app_ip}
   User ubuntu
   ProxyJump ${stage}-jumphost
@@ -26,7 +26,7 @@ EOF
 )
 
 db_entry=$(cat <<EOF
-Host ${stage}-db
+Host ${stage}-${name}-db
   HostName ${db_ip}
   User ubuntu
   ProxyJump ${stage}-jumphost

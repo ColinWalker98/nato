@@ -99,7 +99,7 @@ resource "local_file" "host_vars_db" {
 # This is to avoid using personal keys after the setup has been completed.
 # Ansible will use a dedicated automation user and keypair.
 resource "null_resource" "provision_automation_user_on_instances" {
-  depends_on = [aws_instance.jumphost,aws_instance.application,aws_eip.database]
+  depends_on = [null_resource.modify_ssh_config,null_resource.modify_ansible_hosts_ini,local_file.host_vars_app,local_file.host_vars_db,local_file.host_vars_jumphost]
   provisioner "local-exec" {
     command = "ansible-playbook books/provision_automation_user.yaml -e 'ansible_user=ubuntu' -e 'ansible_ssh_private_key_file=~/.ssh/id_rsa' -e 'target_servers=${var.stage}-${var.env_name}-jumphost,${var.stage}-${var.env_name}-app,${var.stage}-${var.env_name}-db'"
     environment = {
