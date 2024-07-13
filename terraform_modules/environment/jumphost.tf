@@ -4,7 +4,7 @@ resource "aws_eip" "jumphost" {
   instance   = aws_instance.jumphost.id
   domain     = "vpc"
   tags = {
-    "Name" : "${var.stage}-${var.name}-jumphost-eip"
+    "Name" : "${var.stage}-${var.env_name}-jumphost-eip"
   }
 }
 
@@ -18,6 +18,6 @@ resource "aws_instance" "jumphost" {
   vpc_security_group_ids = [aws_security_group.jumphost_access.id]
 
   tags = {
-    Name = "${var.stage}-${var.name}-jumphost"
+    Name = "${var.stage}-${var.env_name}-jumphost"
   }
 }

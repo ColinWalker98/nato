@@ -7,7 +7,7 @@ resource "aws_vpc" "default" {
   enable_dns_hostnames = true
 
   tags = {
-    Name = "${var.stage}-${var.name}-${var.vpc_name}"
+    Name = "${var.stage}-${var.env_name}-${var.vpc_name}"
   }
 }
 
@@ -16,7 +16,7 @@ resource "aws_internet_gateway" "default" {
   vpc_id = aws_vpc.default.id
 
   tags = {
-    Name = "${var.stage}-${var.name}-ig"
+    Name = "${var.stage}-${var.env_name}-ig"
   }
 }
 
@@ -36,7 +36,7 @@ resource "aws_subnet" "default_public" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "${var.stage}-${var.name}-pub_subnet-${count.index}"
+    Name = "${var.stage}-${var.env_name}-pub_subnet-${count.index}"
   }
 }
 
@@ -48,7 +48,7 @@ resource "aws_subnet" "default_private" {
   availability_zone = element(data.aws_availability_zones.available.names, count.index)
 
   tags = {
-    Name = "${var.stage}-${var.name}-priv_subnet-${count.index}"
+    Name = "${var.stage}-${var.env_name}-priv_subnet-${count.index}"
   }
 }
 

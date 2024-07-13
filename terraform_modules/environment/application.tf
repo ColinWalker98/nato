@@ -4,7 +4,7 @@ resource "aws_eip" "application" {
   instance   = aws_instance.application.id
   domain     = "vpc"
   tags = {
-    "Name" : "${var.stage}-${var.name}-app-eip"
+    "Name" : "${var.stage}-${var.env_name}-app-eip"
   }
 }
 
@@ -23,6 +23,6 @@ resource "aws_instance" "application" {
   }
 
   tags = {
-    Name = "${var.stage}-${var.name}-app"
+    Name = "${var.stage}-${var.env_name}-app"
   }
 }

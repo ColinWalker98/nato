@@ -57,7 +57,7 @@ variable "stage" {
   }
 }
 
-variable "name" {
+variable "env_name" {
   description = "Name of the environment (Builds up the server name: {{stage-name-app}})."
   type        = string
   default     = "web"

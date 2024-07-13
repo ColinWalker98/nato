@@ -20,13 +20,13 @@ resource "aws_lb_target_group" "http" {
 
 # Creates the load balancer itself and assigns a subnet and security group (firewall).
 resource "aws_lb" "loadbalancer" {
-  name               = "${var.stage}-${var.name}-lb"
+  name               = "${var.stage}-${var.env_name}-lb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.loadbalancer_access.id]
   subnets            = aws_subnet.default_public[*].id
 
   tags = {
-    Name = "${var.stage}-${var.name}-lb"
+    Name = "${var.stage}-${var.env_name}-lb"
   }
 }

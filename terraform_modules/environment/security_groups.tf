@@ -1,6 +1,6 @@
 # Allows SSH 22 access from the provided IP range to the jumphost.
 resource "aws_security_group" "jumphost_access" {
-  name        = "access-to-${var.stage}-${var.name}-jumphost"
+  name        = "access-to-${var.stage}-${var.env_name}-jumphost"
   description = "Allow external traffic to the jumphost."
   vpc_id      = aws_vpc.default.id
 
@@ -21,7 +21,7 @@ resource "aws_security_group" "jumphost_access" {
 
 # Allows HTTP 80 access from the provided IP range to the load balancer.
 resource "aws_security_group" "loadbalancer_access" {
-  name        = "access-to-${var.stage}-${var.name}-loadbalancer"
+  name        = "access-to-${var.stage}-${var.env_name}-loadbalancer"
   description = "Allow external traffic to the loadbalancer."
   vpc_id      = aws_vpc.default.id
 
@@ -42,7 +42,7 @@ resource "aws_security_group" "loadbalancer_access" {
 
 # Allows SSH 22 access from the jumphost and HTTP 80 from the load balancer.
 resource "aws_security_group" "application_access" {
-  name        = "access-to-${var.stage}-${var.name}-app"
+  name        = "access-to-${var.stage}-${var.env_name}-app"
   description = "Allow traffic from Loadbalancer to Application server."
   vpc_id      = aws_vpc.default.id
 
@@ -70,7 +70,7 @@ resource "aws_security_group" "application_access" {
 
 # Allows SSH 22 access from the jumphost and MYSQL 3306 from the application server.
 resource "aws_security_group" "database_access" {
-  name        = "access-to-${var.stage}-${var.name}-db"
+  name        = "access-to-${var.stage}-${var.env_name}-db"
   description = "Allow traffic from Application server to Database server."
   vpc_id      = aws_vpc.default.id
 
