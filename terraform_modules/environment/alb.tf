@@ -21,7 +21,7 @@ resource "aws_lb" "loadbalancer" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.loadbalancer_access.id]
-  subnets            = aws_subnet.default_public.*.id
+  subnets            = aws_subnet.default_public[*].id
 
   tags = {
     Name = "${var.stage}-lb"

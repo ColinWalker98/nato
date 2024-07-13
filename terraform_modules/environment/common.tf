@@ -14,11 +14,11 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "random_shuffle" "random_public_subnet" {
-  input = aws_subnet.default_public.*.id
+  input = aws_subnet.default_public[*].id
   result_count = 1
 }
 
 resource "random_shuffle" "random_private_subnet" {
-  input = aws_subnet.default_private.*.id
+  input = aws_subnet.default_private[*].id
   result_count = 1
 }
