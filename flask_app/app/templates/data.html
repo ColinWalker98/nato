@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="data">
+    <h2>Mock data from MongoDB</h2>
+    <ul id="data-list">
+        {% for item in data %}
+        <li>{{ item.name }}: {{ item.value }}</li>
+        {% endfor %}
+    </ul>
+</section>
+{% endblock %}
