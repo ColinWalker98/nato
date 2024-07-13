@@ -36,14 +36,14 @@ resource "null_resource" "modify_ansible_hosts_ini" {
   #${self.triggers.project_id}
   provisioner "local-exec" {
     command = <<-EOT
-    bash -c "../../terraform_modules/environment/scripts/update_ansible_hosts.sh addition ${self.triggers.stage}-${self.triggers.env_name}"
+    bash -c "../../terraform_modules/environment/scripts/update_ansible_hosts.sh addition ${self.triggers.stage} ${self.triggers.env_name}"
   EOT
   }
 
   provisioner "local-exec" {
     when = destroy
     command = <<-EOT
-    bash -c "../../terraform_modules/environment/scripts/update_ansible_hosts.sh removal ${self.triggers.stage}-${self.triggers.env_name}"
+    bash -c "../../terraform_modules/environment/scripts/update_ansible_hosts.sh removal ${self.triggers.stage} ${self.triggers.env_name}"
   EOT
   }
 }
