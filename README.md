@@ -23,7 +23,10 @@
   - [AWS S3](#aws-s3-1)
   - [AWS DynamoDB](#aws-dynamodb-1)
   - [Tools and Packages](#tools-and-packages)
-6[Execution instructions](#execution-instructions)
+6. [Execution instructions](#execution-instructions)
+  - [Automated deployment](#automated-deployment)
+  - [Manual deployment](#manual-deployment)
+  - [Validation](#validation)
   
 # Introduction
 This repository serves as a comprehensive guide and toolkit for deploying and managing an infrastructure environment using 
