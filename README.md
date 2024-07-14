@@ -245,18 +245,17 @@ Therefore, please generate the following keys before executing Terraform or Ansi
 
 ## AWS IAM
 To set up the required permissions and roles, follow these steps:
-
-1. Create an IAM User:
+#### Create an IAM User:
   - An IAM user must be created for the engineer.
   - The engineer must activate security credentials in the form of an access_key and secret_key.
   - These keys are used to configure the AWS profile on the local device.
   - Once the key pair is generated, run aws configure to start the configuration process.
-
-2. Create an IAM Role (terraform-operator):
+  
+#### Create an IAM Role (terraform-operator):
   - Create an IAM role named terraform-operator. This role will be used by Terraform to provision all resources.
   - Assign a policy to this role. For this example, the Administrator Access policy is used as it is a development/test scenario. In a production environment, define and apply appropriate permissions and access scopes.
 
-3. Allow IAM User to Assume the IAM Role:
+#### Allow IAM User to Assume the IAM Role:
   - Configure the IAM role to allow the IAM user to assume it.
   - This is granted by the trusted entities of the role. Below is an example policy that allows the IAM user to assume the terraform-operator role:
 ```
