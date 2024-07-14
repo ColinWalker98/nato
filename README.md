@@ -1,9 +1,9 @@
 # Table of Contents
 1. [Introduction](#introduction)
 2. [Assumptions made during exercise](#assumptions-made-during-exercise)
-3. [Required Tools / Packages on local device](#required-tools--packages-on-local-device)
-  - [Requirements](#requirements)
-  - [Manually Provisioned Resources](#manually-provisioned-resources)
+3. [Requirements](#requirements)
+  - [Required Tools / Packages on local device](#required-tools--packages-on-local-device) 
+  - [Manually Provisioned AWS Resources](#manually-provisioned-AWS-resources)
     - [AWS IAM](#aws-iam)
     - [AWS S3](#aws-s3)
     - [AWS DynamoDB](#aws-dynamodb)
@@ -37,8 +37,8 @@ The subsequent sections provide detailed instructions on the required tools, pac
 # Assumptions made during exercise
 
 
-# Required Tools / Packages on local device
-## Requirements
+# Requirements
+## Tools and Packages
 <table>
   <tr>
     <td><strong>tfenv</strong></td>
@@ -87,7 +87,7 @@ The subsequent sections provide detailed instructions on the required tools, pac
   </tr>
 </table>
 
-## Manually Provisioned Resources
+## Manually Provisioned AWS Resources
 ### AWS IAM
 <table>
   <tr>
