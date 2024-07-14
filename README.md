@@ -317,7 +317,7 @@ For more information about the module please visit [README](terraform_modules/en
 │   └── update_ssh_config.sh
 ├── templates
 │   └── ansible_hostvar.tpl
-└── vars.tf
+└── variables.tf
 ```
 
 `templates` contains a .tpl file which is called and filled by Terraform to provision the Ansible host variables for each server that is set up. <br/>
@@ -329,7 +329,7 @@ For more information about the module please visit [README](terraform_modules/en
 `common.tf` common resources (ami, selection of subnet, key pair). <br/>
 `network.tf` network resources (vpc, subnets, routes, gateway). <br/>
 `providers.tf` defines all required providers and their respective versions and configuration. <br/>
-`vars.tf` defines all required variables. <br/>
+`variables.tf` defines all required variables. <br/>
 
 
 # Setup instructions
