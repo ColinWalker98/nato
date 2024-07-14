@@ -309,5 +309,5 @@ To set up the Terraform remote state locking, perform the following actions:
 - This table will be used to manage state locking and prevent concurrent modifications.
 
 ## Tools and Packages
-Please install the required tools and packages mentioned earlier in [requirements](Requirements). <br/>
+Please install the required tools and packages mentioned earlier in [Tools and Packages](#tools-and-packages) . <br/>
 The engineer is expected to have sufficient knowledge on how to install these.
