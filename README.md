@@ -1,12 +1,23 @@
 # Introduction
+This repository serves as a comprehensive guide and toolkit for deploying and managing an infrastructure environment using 
+a combination of Terraform, Ansible, and a Flask web application. It includes all necessary scripts, configurations 
+and instructions to set up and maintain a robust and scalable environment. <br/><br/>
+
+The repository is organized into several key components:
+- Ansible: Used for configuration management and automation of server provisioning. 
+- Terraform: Utilized for infrastructure as code, enabling the deployment and management of cloud resources. 
+- Flask App: A web application to demonstrate the deployment process and integration with the infrastructure. <br/><br/>
+
+By following the guidelines and utilizing the provided tools and scripts, you will be able to automate the deployment process,
+ensure consistent configurations, and manage your infrastructure efficiently. <br/>
+
+The subsequent sections provide detailed instructions on the required tools, packages, and manual provisioning steps necessary to get started.
+
+# Assumptions made during exercise
+
 
 # Required Tools / Packages on local device
-
-Generate the following keys;
-~/.ssh/automation.key (no password as it will be used for automation purposes)
-~/.ssh/id_rsa (Used by Terraform to deploy the instances and trigger provisioning of the automation user.)
-
-## Requirements:
+## Requirements
 <table>
   <tr>
     <td><strong>tfenv</strong></td>
@@ -114,8 +125,8 @@ Generate the following keys;
 </table>
 
 # Project structure
-This git repository has various folders. Below you will see the layout of the repository.
-For each topic you can find corresponding documentation below.
+This git repository has various folders. Below you will see the layout of the repository. <br/>
+For each topic you can find corresponding documentation below. <br/>
 ```
 ├── README.md
 ├── ansible
@@ -123,7 +134,7 @@ For each topic you can find corresponding documentation below.
 ├── flask_app
 └── terraform_modules
 ```
-### ansible
+## ansible
 This directory contains all files related to Ansible.
 ```
 ├── ansible.cfg
@@ -140,7 +151,7 @@ This directory contains all files related to Ansible.
 └── prod
 ```
 
-### environments
+## environments
 ```
 ├── acc
 │   └── web.tf
@@ -151,7 +162,7 @@ This is the base directory from where an environment is set up per stage (`dev`,
 For each desired environment a Terraform is created in the respective stage folder. Example: `dev/web.tf`,`acc/web,tf`. <br/><br/>
 > Important to note here is that the backends should be configured per environment. Make sure to modify the values as needed. <br/>
 
-### flask_app
+## flask_app
 ```
 ├── app
 │   ├── __init__.py
@@ -183,7 +194,7 @@ Alongside the `app` folder, we have the `__init__.py` as well as the `routes.py`
 `routes.py` can be regarded as the API of the application. <br/>
 Here we create all of our request paths and query the necessary data from the database to return it to the rendered html web page. <br/>
 
-### terraform_modules/environment
+## terraform_modules/environment
 Contains two folders `scripts` and `templates` alongside many Terraform files. <br/>
 `scripts` contains two bash scripts that are called from a Terraform local exec to update your local ssh config as well as update the Ansible hosts.ini file.  <br/>
 This minimises the manual actions required by the user. <br/>
@@ -220,3 +231,63 @@ For more information about the module please visit [README](terraform_modules/en
 `vars.tf` defines all required variables. <br/>
 
 
+# Setup instructions
+## SSH keypairs
+When setting up the infrastructure with Terraform and Ansible, certain SSH key pairs must be present on the local device. <br/>
+
+Terraform uses ~/.ssh/id_rsa to set up the instances, enabling SSH access to these servers (user: ubuntu). <br/>
+
+Ansible will then use the ubuntu user and the ~/.ssh/id_rsa key pair to provision an automation user on all instances. <br/>
+The automation user will have its own dedicated key, ~/.ssh/automation.key, which needs to be present on the local machine before deployment. <br/>
+Therefore, please generate the following keys before executing Terraform or Ansible: <br/>
+- `~/.ssh/automation.key` (no password, used for automation purposes)
+- `~/.ssh/id_rsa` (used by Terraform to deploy the instances and trigger provisioning of the automation user)
+
+## AWS IAM
+To set up the required permissions and roles, follow these steps:
+
+1. Create an IAM User:
+  - An IAM user must be created for the engineer.
+  - The engineer must activate security credentials in the form of an access_key and secret_key.
+  - These keys are used to configure the AWS profile on the local device.
+  - Once the key pair is generated, run aws configure to start the configuration process.
+
+2. Create an IAM Role (terraform-operator):
+  - Create an IAM role named terraform-operator. This role will be used by Terraform to provision all resources.
+  - Assign a policy to this role. For this example, the Administrator Access policy is used as it is a development/test scenario. In a production environment, define and apply appropriate permissions and access scopes.
+
+3. Allow IAM User to Assume the IAM Role:
+  - Configure the IAM role to allow the IAM user to assume it.
+  - This is granted by the trusted entities of the role. Below is an example policy that allows the IAM user to assume the terraform-operator role:
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::{{account_id}}:user/colin.walker.dev"
+      },
+      "Action": "sts:AssumeRole",
+      "Condition": {}
+    }
+  ]
+}
+```
+
+## AWS S3
+To set up Terraform remote state management using an S3 bucket, perform the following actions:
+- Log in to your AWS Management Console. 
+- Navigate to the S3 service. 
+- Create a new bucket. Give it a unique name and select a region. 
+- Enable versioning on the bucket for state file history.
+
+## AWS DynamoDB
+To set up the Terraform remote state locking, perform the following actions:
+- Navigate to the DynamoDB service.
+- Create a new table with a primary key named LockID.
+- This table will be used to manage state locking and prevent concurrent modifications.
+
+## Tools and Packages
+Please install the required tools and packages mentioned earlier in [requirements](Requirements). <br/>
+The engineer is expected to have sufficient knowledge on how to install these.
