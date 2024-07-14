@@ -12,3 +12,7 @@
 
     - name: Execute insert_data.py script
       command: /usr/bin/python3 /opt/insert_data.py
+
+    - name: Print loadbalancer public DNS name
+      debug:
+        msg: "{{loadbalancer_public_dns}}"

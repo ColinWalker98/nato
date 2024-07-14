@@ -455,8 +455,8 @@ terraform apply
 cd {{path_where_repository_is_cloned}}/ansible
 ansible-playbook books/provision_db_server.yaml -e 'target_servers=dev-web-db'
 ansible-playbook books/provision_app_server.yaml -e 'target_servers=dev-web-app'
-ansible-playbook books/populate_mongodb.yaml -e 'target_servers=dev-web-app'
 ansible-playbook books/deploy_application.yaml -e 'target_servers=dev-web-app'
+ansible-playbook books/populate_mongodb.yaml -e 'target_servers=dev-web-app'
 ```
 
 ## Validation
