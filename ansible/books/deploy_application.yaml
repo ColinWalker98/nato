@@ -39,6 +39,13 @@
       changed_when: True
       notify: restart_flask
 
+    - name: Call notified handler.
+      meta: flush_handlers
+
+    - name: Print loadbalancer public DNS name
+      debug:
+        msg: "{{loadbalancer_public_dns}}"
+
   handlers:
     - name: restart_flask
       become_user: ubuntu
