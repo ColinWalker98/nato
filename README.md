@@ -23,6 +23,7 @@
   - [AWS S3](#aws-s3-1)
   - [AWS DynamoDB](#aws-dynamodb-1)
   - [Tools and Packages](#tools-and-packages)
+6[Execution instructions](#execution-instructions)
   
 # Introduction
 This repository serves as a comprehensive guide and toolkit for deploying and managing an infrastructure environment using 
@@ -75,6 +76,8 @@ In order to deploy the environment, the following decisions have been made.
 ### Infrastructure
 - Infrastructure will be deployed on the AWS Cloud provider.
 - Infrastructure resides in a public subnet. At first, the desire was to place the application and database instance in a private subnet. However, this would require a NAT gateway to allow internet access from these instances. Therefore, in order to reduce personal costs, I have placed the instances in a public subnet.
+- Besides the application and database instance, I have provisioned a jumphost instance which is used to provide SSH port 22 access to the application and database servers. By doing this we refuse any direct access to the application and database instances.
+- Additionally, A loadbalancer is deployed to serve as entrypoint to the application for HTTP 80 traffic.
 - Access to the instances has been restricted by utilising AWS Security Groups as follows;
   - Loadbalancer is accessible 
     - from the internet on HTTP port 80 (HTTPS 443 was not used as I did not provision the required certificate for tls validation).
@@ -370,15 +373,89 @@ To set up the required permissions and roles, follow these steps:
 To set up Terraform remote state management using an S3 bucket, perform the following actions:
 - Log in to your AWS Management Console. 
 - Navigate to the S3 service. 
-- Create a new bucket. Give it a unique name and select a region. 
+- Create a new bucket.
+  - name: `terraform-remote-state-nato`
+  - region: `eu-central-1`
 - Enable versioning on the bucket for state file history.
 
 ## AWS DynamoDB
 To set up the Terraform remote state locking, perform the following actions:
 - Navigate to the DynamoDB service.
-- Create a new table with a primary key named LockID.
+- Create a new table
+  - name: `terraform-remote-state-lock-nato`
+  - primary_key: `LockID`
 - This table will be used to manage state locking and prevent concurrent modifications.
 
 ## Tools and Packages
 Please install the required tools and packages mentioned earlier in [Tools and Packages](#tools-and-packages) . <br/>
 The engineer is expected to have sufficient knowledge on how to install these.
+
+# Execution instructions
+Once the setup instructions have been completed. We can proceed to provision the environment.
+In this scenario we will be using `dev/web.tf` as an example. This example environment is included in the repository.
+
+In order to deploy the `dev-web` environment, we have to make 1 change to the file.
+Here is the content of the file located at `$REPO_PATH/environments/dev/web.tf`.
+
+The change we must make is to modify the `accountid` to your corresponding aws account id.
+`accountid                  = "743558884073"`
+
+```
+terraform {
+  backend "s3" {
+    key            = "dev/web/terraform.tfstate"
+    bucket         = "terraform-remote-state-nato"
+    region         = "eu-central-1"
+    encrypt        = true
+    dynamodb_table = "terraform-remote-state-lock-nato"
+  }
+}
+
+module "dev_web_env" {
+  source                     = "../../terraform_modules/environment"
+  aws_region                 = "eu-central-1"
+  instance_type              = "t2.micro"
+  stage                      = "dev"
+  env_name                   = "web"
+  accountid                  = "743558884073"
+  fully_automated_deployment = true
+}
+```
+
+### Automated deployment
+
+Please note, that in the example, `fully_automated_deployment = true` is enabled and therefore, chain the Ansible playbooks from Terraform.
+
+Once everything has been prepared as desired, execute the following.
+```
+cd {{path_where_repository_is_cloned}}/environments/dev
+terraform plan
+terraform apply
+```
+
+
+### Manual deployment
+For a separate deployment of Terraform and Ansible, set `fully_automated_deployment = false`.
+This will ensure Terraform only provisions the infrastructure and not the configuration of the application and database.
+
+Therefore we must perform some additional tasks as follows;
+```
+cd {{path_where_repository_is_cloned}}/environments/dev
+terraform plan
+terraform apply
+
+cd {{path_where_repository_is_cloned}}/ansible
+ansible-playbook books/provision_db_server.yaml -e 'target_servers=dev-web-db'
+ansible-playbook books/provision_app_server.yaml -e 'target_servers=dev-web-app'
+ansible-playbook books/populate_mongodb.yaml -e 'target_servers=dev-web-app'
+ansible-playbook books/deploy_application.yaml -e 'target_servers=dev-web-app'
+```
+
+## Validation
+In order to validate if the environment is working as expected, navigate to the public DNS of the loadbalancer.
+The application should respond with the index page.
+
+To retrieve information, navigate to the data page in the navigation bar.
+
+Additionally, this can be done by navigating to the following endpoint;
+`http://{{loadbalancer_dns}}:80/data`
