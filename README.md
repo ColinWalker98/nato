@@ -107,36 +107,55 @@ Generate the following keys;
 This git repository has various folders. Below you will see the layout of the repository.
 For each topic you can find corresponding documentation below.
 ```
-.
 ├── README.md
 ├── ansible
-│   ├── ansible.cfg
-│   ├── books
-│   └── inventory
 ├── environments
-│   ├── acc
-│   └── dev
 ├── flask_app
-│   ├── app
-│   ├── config.py
-│   ├── requirements.txt
-│   └── run.py
 └── terraform_modules
-    └── environment
 ```
 ### ansible
 This directory contains all files related to Ansible.
-- ansible.cfg
-- hosts
-- inventory
-- playbooks
+```
+├── ansible.cfg
+├── books
+│ ├── deploy_application.yaml
+│ ├── populate_mongodb.yaml
+│ ├── provision_app_server.yaml
+│ ├── provision_automation_user.yaml
+│ ├── provision_db_server.yaml
+│ └── templates
+└── inventory
+├── acc
+├── dev
+└── prod
+```
 
 ### environments
+```
+├── acc
+│   └── web.tf
+└── dev
+    └── web.tf
+```
 This is the base directory from where an environment is set up per stage (`dev`, `acc`, `prod`). <br/>
 For each desired environment a Terraform is created in the respective stage folder. Example: `dev/web.tf`,`acc/web,tf`. <br/><br/>
 > Important to note here is that the backends should be configured per environment. Make sure to modify the values as needed. <br/>
 
 ### flask_app
+```
+├── app
+│   ├── __init__.py
+│   ├── routes.py
+│   ├── static
+│   │   └── css
+│   └── templates
+│       ├── base.html
+│       ├── data.html
+│       └── index.html
+├── config.py
+├── requirements.txt
+└── run.py
+```
 This directory contains all files related to the web application. I followed the traditional flask folder layout. <br/>
 In the root of the directory, we can find `run.py`, `config.py`, `requirements.txt` . <br/>
 
@@ -154,13 +173,30 @@ Alongside the `app` folder, we have the `__init__.py` as well as the `routes.py`
 `routes.py` can be regarded as the API of the application. <br/>
 Here we create all of our request paths and query the necessary data from the database to return it to the rendered html web page. <br/>
 
-### terraform_modules
+### terraform_modules/environment
 Contains two folders `scripts` and `templates` alongside many Terraform files. <br/>
 `scripts` contains two bash scripts that are called from a Terraform local exec to update your local ssh config as well as update the Ansible hosts.ini file.  <br/>
 This minimises the manual actions required by the user. <br/>
 
-`templates` contains a .tpl file which is called and filled by Terraform to provision the Ansible host variables for each server that is set up. <br/>
+```
+├── README.md
+├── alb.tf
+├── ansible.tf
+├── application.tf
+├── common.tf
+├── database.tf
+├── jumphost.tf
+├── network.tf
+├── providers.tf
+├── scripts
+│   ├── update_ansible_hosts.sh
+│   └── update_ssh_config.sh
+├── templates
+│   └── ansible_hostvar.tpl
+└── vars.tf
+```
 
+`templates` contains a .tpl file which is called and filled by Terraform to provision the Ansible host variables for each server that is set up. <br/>
 `alb.tf` resources relevant to the application. load balancer. <br/>
 `ansible.tf` prepares the server configuration in the Ansible directory and potentially fully automates the deployment depending on the users' choice of variables. <br/>
 `application.tf` application instance relevant resources (ec2, eip, sg). <br/>
