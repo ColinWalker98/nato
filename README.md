@@ -2,6 +2,7 @@
 1. [Introduction](#introduction)
 2. [Assignment](#assignment)
 3. [Assumptions made during exercise](#assumptions-made-during-exercise)
+   - [Repository](#repository)
    - [Infrastructure](#infrastructure)
    - [Automation](#automation)
    - [Application](#application)
@@ -75,6 +76,8 @@ In context of the assignment, the engineer has intermediate to advanced knowledg
 Therefore, the engineer is able to set up the required tools and packages on their local device in order to execute the setup of the assignment based on the readme.
 
 In order to deploy the environment, the following decisions have been made.
+## Repository
+- Ideally I would create a separate git repository to store terraform modules as it would allow us to version them. However, for the sake of usability in this assignment, a single repository is created to collect all required files to set up the environment.
 
 ### Infrastructure
 - Infrastructure will be deployed on the AWS Cloud provider.
@@ -432,6 +435,7 @@ Please note, that in the example, `fully_automated_deployment = true` is enabled
 Once everything has been prepared as desired, execute the following.
 ```
 cd {{path_where_repository_is_cloned}}/environments/dev
+terraform init
 terraform plan
 terraform apply
 ```
@@ -441,9 +445,10 @@ terraform apply
 For a separate deployment of Terraform and Ansible, set `fully_automated_deployment = false`.
 This will ensure Terraform only provisions the infrastructure and not the configuration of the application and database.
 
-Therefore we must perform some additional tasks as follows;
+Therefore, we must perform some additional tasks as follows;
 ```
 cd {{path_where_repository_is_cloned}}/environments/dev
+terraform init
 terraform plan
 terraform apply
 
@@ -456,9 +461,15 @@ ansible-playbook books/deploy_application.yaml -e 'target_servers=dev-web-app'
 
 ## Validation
 In order to validate if the environment is working as expected, navigate to the public DNS of the loadbalancer.
+`http://{{loadbalancer_dns}}/`
+
+
 The application should respond with the index page.
+`http://{{loadbalancer_dns}}/data`
 
-To retrieve information, navigate to the data page in the navigation bar.
+To retrieve raw information in a json format, navigate to the data page in the navigation bar.
+Additionally, this can be done by navigating to the following endpoint manually;
+`http://{{loadbalancer_dns}}/customer_data`
 
-Additionally, this can be done by navigating to the following endpoint;
-`http://{{loadbalancer_dns}}:80/data`
+Or by issuing the following curl command from your local machine;
+`curl http://{{loadbalancer_dns}}/customer_data`

@@ -4,7 +4,7 @@ IFS=$'\n\t'
 
 action="$1"
 hostnames=("${2}-${3}-jumphost" "${2}-${3}-app" "${2}-${3}-db")
-hosts_file="../../../ansible/inventory/${2}/hosts.ini"
+hosts_file="../../ansible/inventory/${2}/hosts.ini"
 
 case "${action}" in
   "addition")
