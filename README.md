@@ -445,7 +445,7 @@ terraform apply
 For a separate deployment of Terraform and Ansible, set `fully_automated_deployment = false`.
 This will ensure Terraform only provisions the infrastructure and not the configuration of the application and database.
 
-Therefore, we must perform some additional tasks as follows;
+Therefore, we must perform some additional tasks in the order as follows;
 ```
 cd {{path_where_repository_is_cloned}}/environments/dev
 terraform init
