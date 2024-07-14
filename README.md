@@ -14,6 +14,11 @@ Generate the following keys;
     <td>Allows user to switch between various Terraform versions.</td>
   </tr>
   <tr>
+    <td><strong>terraform</strong></td>
+    <td>1.9.2</td>
+    <td>Terraform (installed using tfenv install 1.9.2).</td>
+  </tr>
+  <tr>
     <td><strong>tflint</strong></td>
     <td>0.52.0</td>
     <td>Ensures proper conventions are used and identifies any deprecated usage of the HCL.</td>
@@ -37,6 +42,11 @@ Generate the following keys;
     <td><strong>python3</strong></td>
     <td>3.12.4</td>
     <td>Python3 interpreter.</td>
+  </tr>
+  <tr>
+    <td><strong>ansible</strong></td>
+    <td>core 2.17.1</td>
+    <td>Ansible.</td>
   </tr>
   <tr>
     <td><strong>IDE</strong></td>
