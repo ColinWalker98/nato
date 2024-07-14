@@ -46,6 +46,10 @@ resource "aws_lb_target_group_attachment" "test" {
   port             = 80
 }
 
+output "loadbalancer_public_dns" {
+  value = aws_lb.loadbalancer.dns_name
+}
+
 # Creates the load balancer itself and assigns a subnet and security group (firewall).
 resource "aws_lb" "loadbalancer" {
   name               = "${var.stage}-${var.env_name}-lb"

@@ -1,7 +1,12 @@
 # Table of Contents
 1. [Introduction](#introduction)
-2. [Assumptions made during exercise](#assumptions-made-during-exercise)
-3. [Requirements](#requirements)
+2. [Assignment](#assignment)
+3. [Assumptions made during exercise](#assumptions-made-during-exercise)
+   - [Infrastructure](#infrastructure)
+   - [Automation](#automation)
+   - [Application](#application)
+   - [Database](#database)
+4. [Requirements](#requirements)
   - [Tools and Packages](#tools-and-packages) 
   - [Manually Provisioned AWS Resources](#manually-provisioned-AWS-resources)
     - [AWS IAM](#aws-iam)
@@ -22,19 +27,85 @@
 # Introduction
 This repository serves as a comprehensive guide and toolkit for deploying and managing an infrastructure environment using 
 a combination of Terraform, Ansible, and a Flask web application. It includes all necessary scripts, configurations 
-and instructions to set up and maintain a robust and scalable environment. <br/><br/>
+and instructions to set up and maintain a robust and scalable environment. <br/>
 
 The repository is organized into several key components:
 - Ansible: Used for configuration management and automation of server provisioning. 
 - Terraform: Utilized for infrastructure as code, enabling the deployment and management of cloud resources. 
-- Flask App: A web application to demonstrate the deployment process and integration with the infrastructure. <br/><br/>
+- Flask App: A web application to demonstrate the deployment process and integration with the infrastructure. <br/>
 
 By following the guidelines and utilizing the provided tools and scripts, you will be able to automate the deployment process,
 ensure consistent configurations, and manage your infrastructure efficiently. <br/>
 
 The subsequent sections provide detailed instructions on the required tools, packages, and manual provisioning steps necessary to get started.
 
+# Assignment
+You are the engineer tasked to deploy and configure a system composed of two VMs, a webserver and a database. <br/>
+The activity will target two environments at the same time.
+
+Requirements:
+- Deployment of the two VMs will be automated using Terraform
+- Configuration of the two VMs will be automated using Ansible
+- Write a simple REST call to read any data of the database
+
+Output: A GitHub project containing the code and a README file. You are free to make assumptions related to the environments, webserver, database and any other missing information regarding this task.
+The assumptions shall be properly stated within the README file.
+
+Provide your work as a GitHub link towards a public project and as a .zip package, that contains all your GitHub project files. <br/>
+The assignment version assessed will be the one received in the .zip package and it should be provided no later than 24 hours before the interview appointment. <br/>
+Prepare to present it during the next phase interview. The interview panel might ask questions related to the assignment output.
+
 # Assumptions made during exercise
+Throughout the readme, the complete solution of the application, database, webservice and other components requested in the assignment, will be referred to as `environment`.
+
+In context of the assignment, the engineer has intermediate to advanced knowledge of:
+- AWS
+- Terraform
+- Ansible
+- UNIX operating systems
+- Bash
+- Python
+- Web application development
+- Networking
+
+Therefore, the engineer is able to set up the required tools and packages on their local device in order to execute the setup of the assignment based on the readme.
+
+In order to deploy the environment, the following decisions have been made.
+
+### Infrastructure
+- Infrastructure will be deployed on the AWS Cloud provider.
+- Infrastructure resides in a public subnet. At first, the desire was to place the application and database instance in a private subnet. However, this would require a NAT gateway to allow internet access from these instances. Therefore, in order to reduce personal costs, I have placed the instances in a public subnet.
+- Access to the instances has been restricted by utilising AWS Security Groups as follows;
+  - Loadbalancer is accessible 
+    - from the internet on HTTP port 80 (HTTPS 443 was not used as I did not provision the required certificate for tls validation).
+  - Jumphost instance is accessible 
+    - from the provided CIDR on SSH port 22 (the desired CIDR is passed as a Terraform variable).
+  - Application instance is accessible 
+    - from the jumphost  on SSH port 22.
+    - from the load balancer on HTTP port 80
+  - Database instance is accessible 
+    - from the jumphost on SSH port 22.
+    - from the application instance on TCP port 27017.
+- No additional DNS name has been created. To access the application, refer to the Terraform output resource `loadbalancer_public_dns` or fetch the DNS from the Ansible host variables.
+
+### Automation
+- Ansible hosts and host variables will be provisioned by Terraform through a template to reduce manual tasks and limit human errors.
+- SSH Configuration on the local device will be provisioned by Terraform to reduce manual tasks and limit human errors.
+- Ansible will use the ami defined user to initially set up an automation user. We should not use personal users for automation purposes. All subsequent playbooks will use the automation user.
+- Ansible playbooks can be run manually or automated by Terraform based on `fully_automated_deployment = true | false` variable.
+- Playbookas are made idempotent, therefore, no matter how many times a playbook is ran on the host, it will not fail or cause issues.
+
+### Application
+- Python Flask framework is used to act as webservice.
+- The website content itself is quite basic as I believed the main focus of the exercise to be infrastructure. However, I have created the website in a best practice way, regardless of the content.
+- I have kept in mind the dockerisation of the application and this is possible with few minor changes but, I have not dockerised it. As of now it is run as a systemd service on the instance.
+- Provisioning of the application instance is done by the playbook `provision_app_server.yaml`. This installs packages, creates directory structure and the systemd service. 
+> Deployment of the application is done by the playbook `deploy_application.yaml`. This copies the `flask_app` folder to the instance, installs necessary packages and restarts the service. Important to note here is that the playbook will build the dotenv file from a template. The flask application uses the dotenv file to load the environment variables.
+
+### Database
+- MongoDB is used to act as database server.
+- Provisioning of the database instance is done by the playbook `provision_db_server.yaml` it ensures the correct mongodb version and dependencies are installed and creates the `database` and `collection` that will be used by the application.
+- Populating the database with mock data done by the playbook `populate_mongodb.yaml` it copies a python script to the application server and runs it. In turn, this inserts some basic mock data into mongodb.
 
 
 # Requirements
