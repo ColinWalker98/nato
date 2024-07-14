@@ -2,7 +2,7 @@
 1. [Introduction](#introduction)
 2. [Assumptions made during exercise](#assumptions-made-during-exercise)
 3. [Requirements](#requirements)
-  - [Required Tools / Packages on local device](#required-tools--packages-on-local-device) 
+  - [Tools and Packages](#tools-and-packages) 
   - [Manually Provisioned AWS Resources](#manually-provisioned-AWS-resources)
     - [AWS IAM](#aws-iam)
     - [AWS S3](#aws-s3)
