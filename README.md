@@ -1,3 +1,24 @@
+# Table of Contents
+1. [Introduction](#introduction)
+2. [Assumptions made during exercise](#assumptions-made-during-exercise)
+3. [Required Tools / Packages on local device](#required-tools--packages-on-local-device)
+  - [Requirements](#requirements)
+  - [Manually Provisioned Resources](#manually-provisioned-resources)
+    - [AWS IAM](#aws-iam)
+    - [AWS S3](#aws-s3)
+    - [AWS DynamoDB](#aws-dynamodb)
+4. [Project structure](#project-structure)
+  - [ansible](#ansible)
+  - [environments](#environments)
+  - [flask_app](#flask_app)
+  - [terraform_modules](#terraform_modules)
+5. [Setup instructions](#setup-instructions)
+  - [SSH keypairs](#ssh-keypairs)
+  - [AWS IAM](#aws-iam-1)
+  - [AWS S3](#aws-s3-1)
+  - [AWS DynamoDB](#aws-dynamodb-1)
+  - [Tools and Packages](#tools-and-packages)
+  
 # Introduction
 This repository serves as a comprehensive guide and toolkit for deploying and managing an infrastructure environment using 
 a combination of Terraform, Ansible, and a Flask web application. It includes all necessary scripts, configurations 
