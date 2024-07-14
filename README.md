@@ -178,6 +178,8 @@ Contains two folders `scripts` and `templates` alongside many Terraform files. <
 `scripts` contains two bash scripts that are called from a Terraform local exec to update your local ssh config as well as update the Ansible hosts.ini file.  <br/>
 This minimises the manual actions required by the user. <br/>
 
+For more information about the module please visit [README](terraform_modules/README.md).
+
 ```
 ├── README.md
 ├── alb.tf
