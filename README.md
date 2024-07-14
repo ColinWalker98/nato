@@ -1,7 +1,6 @@
 # Introduction
 
-## Required Tools / Packages on Local Device
-
+## Required Tools / Packages on local device
 ### Requirements:
 <table>
   <tr>
@@ -31,25 +30,59 @@
 </table>
 
 ## Manually Provisioned Resources
-
 ### AWS IAM
-
-#### Users
-- AWS Account (root)
-- Personal AWS IAM User for the engineer
-- Terraform operator AWS IAM Role
-
-#### Groups
-- Operations engineer (linked to the engineer)
-
-#### Roles
-- Terraform operator
-
-#### Policy
-- `AdministratorAccess` policy has been applied to the Terraform operator role. Best practice would be to limit the policy permissions to the necessary resources.
+<table>
+  <tr>
+    <td><strong>Resource</strong></td>
+    <td>Description</td>
+    <td>Example</td>
+  </tr>
+  <tr>
+    <td><strong>Users</strong></td>
+    <td>AWS Root Account, Engineer user</td>
+    <td>colin.walker.dev</td>
+  </tr>
+  <tr>
+    <td><strong>Groups</strong></td>
+    <td>Group to assign permissions to, bound to an IAM User</td>
+    <td>operations_engineer</td>
+  </tr>
+  <tr>
+    <td><strong>Roles</strong></td>
+    <td>Entity that has policies assign to provide permissions. Short lived credentials. Roles can be assumed by trusted entities.</td>
+    <td>terraform-operator</td>
+  </tr>
+  <tr>
+    <td><strong>Policy</strong></td>
+    <td>A JSON Document that defines access and permissions. Policies can be attached to Groups / Roles.</td>
+    <td>terraform-operator</td>
+  </tr>
+</table>
 
 ### AWS S3
-- Remote Terraform state setup.
+<table>
+  <tr>
+    <td><strong>Resource</strong></td>
+    <td>Description</td>
+    <td>Example</td>
+  </tr>
+  <tr>
+    <td><strong>AWS S3</strong></td>
+    <td>Storage bucket where the Terraform state file is stored.</td>
+    <td>terraform-remote-state-nato</td>
+  </tr>
+</table>
 
 ### AWS DynamoDB
-- Locking mechanism in an AWS DynamoDB table to avoid multiple people working on the same target with conflicting lock/state files.
+<table>
+  <tr>
+    <td><strong>Resource</strong></td>
+    <td>Description</td>
+    <td>Example</td>
+  </tr>
+  <tr>
+    <td><strong>AWS Dynamodb</strong></td>
+    <td>Table in AWS to handle the Terraform locking mechanism.</td>
+    <td>terraform-remote-state-lock-nato</td>
+  </tr>
+</table>
