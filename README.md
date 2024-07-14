@@ -4,7 +4,7 @@
 
 Generate the following keys;
 ~/.ssh/automation.key (no password as it will be used for automation purposes)
-~/.ssh/id_rsa (Used by terraform to deploy the instances and trigger provisioning of the automation user.)
+~/.ssh/id_rsa (Used by Terraform to deploy the instances and trigger provisioning of the automation user.)
 
 ## Requirements:
 <table>
@@ -125,7 +125,7 @@ For each topic you can find corresponding documentation below.
     └── environment
 ```
 ### ansible
-This directory contains all files related to ansible.
+This directory contains all files related to Ansible.
 - ansible.cfg
 - hosts
 - inventory
@@ -133,7 +133,7 @@ This directory contains all files related to ansible.
 
 ### environments
 This is the base directory from where an environment is set up per stage (`dev`, `acc`, `prod`). <br/>
-For each desired environment a terraform is created in the respective stage folder. Example: `dev/web.tf`,`acc/web,tf`. <br/><br/>
+For each desired environment a Terraform is created in the respective stage folder. Example: `dev/web.tf`,`acc/web,tf`. <br/><br/>
 > Important to note here is that the backends should be configured per environment. Make sure to modify the values as needed. <br/>
 
 ### flask_app
@@ -155,4 +155,20 @@ Alongside the `app` folder, we have the `__init__.py` as well as the `routes.py`
 Here we create all of our request paths and query the necessary data from the database to return it to the rendered html web page. <br/>
 
 ### terraform_modules
+Contains two folders `scripts` and `templates` alongside many Terraform files. <br/>
+`scripts` contains two bash scripts that are called from a Terraform local exec to update your local ssh config as well as update the Ansible hosts.ini file.  <br/>
+This minimises the manual actions required by the user. <br/>
+
+`templates` contains a .tpl file which is called and filled by Terraform to provision the Ansible host variables for each server that is set up. <br/>
+
+`alb.tf` resources relevant to the application. load balancer. <br/>
+`ansible.tf` prepares the server configuration in the Ansible directory and potentially fully automates the deployment depending on the users' choice of variables. <br/>
+`application.tf` application instance relevant resources (ec2, eip, sg). <br/>
+`database.tf` database instance relevant resources (ec2, eip, sg). <br/>
+`jumphost.tf` jumphost instance relevant resources (ec2, eip, dg). <br/>
+`common.tf` common resources (ami, selection of subnet, key pair). <br/>
+`network.tf` network resources (vpc, subnets, routes, gateway). <br/>
+`providers.tf` defines all required providers and their respective versions and configuration. <br/>
+`vars.tf` defines all required variables. <br/>
+
 

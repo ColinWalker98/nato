@@ -1,3 +1,31 @@
+# Allows SSH 22 access from the jumphost and HTTP 80 from the load balancer.
+resource "aws_security_group" "application_access" {
+  name        = "access-to-${var.stage}-${var.env_name}-app"
+  description = "Allow internal 22,80 traffic to Application server."
+  vpc_id      = aws_vpc.default.id
+
+  ingress {
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    security_groups = [aws_security_group.loadbalancer_access.id]
+  }
+
+  ingress {
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = [aws_security_group.jumphost_access.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 # Creates a static elastic ip reserved for the application server.
 resource "aws_eip" "application" {
   depends_on = [aws_instance.application]

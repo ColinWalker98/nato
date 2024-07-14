@@ -1,3 +1,24 @@
+# Allows SSH 22 access from the provided IP range to the jumphost.
+resource "aws_security_group" "jumphost_access" {
+  name        = "access-to-${var.stage}-${var.env_name}-jumphost"
+  description = "Allow external 22 traffic to the jumphost."
+  vpc_id      = aws_vpc.default.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = var.allowed_ssh_access
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 # Creates a static elastic ip reserved for the jumphost server.
 resource "aws_eip" "jumphost" {
   depends_on = [aws_instance.jumphost]

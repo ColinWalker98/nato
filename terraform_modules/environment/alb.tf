@@ -1,3 +1,24 @@
+# Allows HTTP 80 access from the provided IP range to the load balancer.
+resource "aws_security_group" "loadbalancer_access" {
+  name        = "access-to-${var.stage}-${var.env_name}-loadbalancer"
+  description = "Allow external 80 traffic to the loadbalancer."
+  vpc_id      = aws_vpc.default.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 # Creates a listener, the load balancer will then actively listen on this port / protocol.
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.loadbalancer.arn
