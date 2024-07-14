@@ -133,14 +133,14 @@ This directory contains all files related to ansible.
 
 ### environments
 This is the base directory from where an environment is set up per stage (`dev`, `acc`, `prod`). <br/>
-For each desired environment a terraform is created in the respective stage folder. Example: `dev/web.tf`,`acc/web,tf`. <br/>
-Important to note here is that the backends should be configured per environment. Make sure to modify the values as needed. <br/>
+For each desired environment a terraform is created in the respective stage folder. Example: `dev/web.tf`,`acc/web,tf`. <br/><br/>
+> Important to note here is that the backends should be configured per environment. Make sure to modify the values as needed. <br/>
 
 ### flask_app
 This directory contains all files related to the web application. I followed the traditional flask folder layout. <br/>
 In the root of the directory, we can find `run.py`, `config.py`, `requirements.txt` . <br/>
 
-`run.py` is used to launch the application
+`run.py` is used to launch the application. <br/>
 `config.py`  creates a class called config to read environment variables and pass them to python. <br/>
 `requirements.txt` contains a list of python packages that are required by the application.  <br/>
   This list is used in the deployment process to ensure automatic installation of these packages. <br/>
@@ -150,7 +150,7 @@ In the `app` folder, we will find two sub folders `static/css` and `templates`. 
 `templates`contains the html pages used to render the website. <br/>
 
 Alongside the `app` folder, we have the `__init__.py` as well as the `routes.py` file. <br/>
-`__init__.py` creates the application and configures the mongodb connection with the variables provided by the config class. <br/>
+`__init__.py` creates the application and configures the mongodb connection with the variables provided by the config class.
 `routes.py` can be regarded as the API of the application. <br/>
 Here we create all of our request paths and query the necessary data from the database to return it to the rendered html web page. <br/>
 
