@@ -95,7 +95,7 @@ In order to deploy the environment, the following decisions have been made.
   - Database instance is accessible 
     - from the jumphost on SSH port 22.
     - from the application instance on TCP port 27017.
-- No additional DNS name has been created. To access the application, refer to the Terraform output resource `loadbalancer_public_dns` or fetch the DNS from the Ansible host variables.
+- No additional DNS name has been created. To access the application, refer to the ansible playbook output or fetch the DNS from the Ansible host variables.
 
 ### Automation
 - Ansible hosts and host variables will be provisioned by Terraform through a template to reduce manual tasks and limit human errors.

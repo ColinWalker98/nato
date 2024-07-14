@@ -1,0 +1,10 @@
+ansible_ssh_host: acc-web-app
+ansible_user: automation
+ansible_ssh_private_key_file: ~/.ssh/automation.key
+server_hostname: "acc-web-app@local"
+private_ip: "10.1.2.85"
+debug_mode: "True"
+mongo_uri: "mongodb://10.1.2.136:27017"
+mongo_ip: "10.1.2.136"
+mongo_port: "27017"
+loadbalancer_public_dns: "acc-web-lb-434621745.eu-west-1.elb.amazonaws.com"
